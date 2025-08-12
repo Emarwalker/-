@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>เมนูข้าวกะเพรายายหนุ่ย</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Noto Sans Thai', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; counter-reset: item; }
+    .pill { display: inline-flex; align-items: center; gap: 4px; border-radius: 9999px; padding: 2px 10px; font-size: 11px; font-weight: 600; }
+    .pill-hot { background: #fee2e2; color: #b91c1c; }
+    .pill-best { background: #fef3c7; color: #b45309; }
+    .lineitem { display: flex; align-items: baseline; justify-content: space-between; gap: .75rem; border-bottom: 1px solid #f5f5f5; padding: .75rem 0; }
+    .name { font-weight: 600; line-height: 1.2; position: relative; }
+    .name::before { counter-increment: item; content: counter(item) ") "; color: #9ca3af; font-weight: 800; margin-right: .25rem; }
+    .price { font-variant-numeric: tabular-nums; font-weight: 800; color: #047857; }
+    .section { border-radius: 1.5rem; background: white; border: 1px solid #e5e7eb; }
+
+    /* กล่องด้านขวา (ราคา + ปุ่มคัดลอก) */
+    .right { display:flex; align-items:center; gap: .5rem; }
+    .copy-btn {
+      background: #f3f4f6;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      padding: 2px 8px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: background .2s;
+    }
+    .copy-btn:hover { background: #e5e7eb; }
+
+    .pill-discount {
+    background: #dcfce7; /* เขียวอ่อน */
+    color: #166534;     /* เขียวเข้ม */
+    }
+  </style>
+</head>
+<body class="bg-neutral-50 text-neutral-900">
+  <header class="py-7 text-center bg-white border-b border-neutral-200">
+    <h1 class="text-2xl md:text-3xl font-extrabold">เมนูข้าวกะเพรายายหนุ่ย รังสิต</h1>
+    <p class="text-xs md:text-sm text-neutral-600">ดูเมนูแล้วพิมพ์สั่งทาง LINE ได้เลย</p>
+  </header>
+
+  <main class="max-w-3xl mx-auto px-4 py-8 space-y-8">
+    <!-- หมวดกะเพรา -->
+    <section class="section p-5 text-center">
+      <h2 class="text-xl font-extrabold mb-2">สั่งผ่าน LINE</h2>
+      <p class="text-sm text-neutral-600 mb-4">สแกน QR Code เพื่อแอดไลน์สั่งเมนูได้เลย</p>
+      <img src="S_gainfriends_2dbarcodes_GW.png" alt="LINE QR Code" class="mx-auto w-40 h-40">
+      <p class="text-sm text-neutral-500 mt-2">หรือคลิก <a href="https://lin.ee/HIvWixE" target="_blank" class="text-green-600 font-bold hover:underline">ที่นี่</a> เพื่อเพิ่มเพื่อนใน LINE</p>
+    </section>
+
+    <section class="section p-5">
+      <h2 class="text-xl font-extrabold mb-1">หมวดกะเพรา</h2>
+      <p class="text-xs text-neutral-600 mb-4">เผ็ดหอมใบกะเพรา ผัดร้อน ๆ ถึงใจ</p>
+      <ul>
+        <li class="lineitem">
+            <span class="name">
+              กะเพราหมูสับไข่ดาว 🐷🍳 
+              <span class="pill pill-best">แนะนำ</span>
+              <span class="pill pill-discount">ลด 10฿</span>
+            </span>
+            <span class="right">
+              <span class="price"><del class="text-neutral-400">65฿</del> 55฿</span>
+              <button class="copy-btn" onclick="copyText('กะเพราหมูสับไข่ดาว 55฿ (จาก 60฿)')">📋 Copy</button>
+            </span>
+          </li>
+
+          <li class="lineitem">
+            <span class="name">
+              กะเพราไก่ไข่ดาว 🐓🍳 
+              <span class="pill pill-best">แนะนำ</span>
+              <span class="pill pill-discount">ลด 5฿</span>
+            </span>
+            <span class="right">
+              <span class="price"><del class="text-neutral-400">55฿</del> 50฿</span>
+              <button class="copy-btn" onclick="copyText('กะเพราไก่ไข่ดาว 50฿ (จาก 55฿)')">📋 Copy</button>
+            </span>
+          </li>
+
+          <li class="lineitem">
+            <span class="name">
+              กะเพราหมูกรอบไข่ดาว 🐖🍳 
+              <span class="pill pill-hot">แนะนำ Hot</span>
+              <span class="pill pill-discount">ลด 20฿</span>
+            </span>
+            <span class="right">
+              <span class="price"><del class="text-neutral-400">85฿</del> 65฿</span>
+              <button class="copy-btn" onclick="copyText('กะเพราหมูกรอบไข่ดาว 65฿ (จาก 85฿)')">📋 Copy</button>
+            </span>
+          </li>
+
+        <li class="lineitem">
+          <span class="name">กะเพราเครื่องในไก่ไข่ดาว 🐓🍳</span>
+          <span class="right">
+            <span class="price">50฿</span>
+            <button class="copy-btn" onclick="copyText('กะเพราเครื่องในไก่ไข่ดาว 50฿')">📋 Copy</button>
+          </span>
+        </li>
+
+        <li class="lineitem">
+          <span class="name">กะเพราหมูสับไข่เยี่ยวม้า 🥚🐖</span>
+          <span class="right">
+            <span class="price">70฿</span>
+            <button class="copy-btn" onclick="copyText('กะเพราหมูสับไข่เยี่ยวม้า 70฿')">📋 Copy</button>
+          </span>
+        </li>
+
+        <li class="lineitem">
+          <span class="name">กะเพราหมูชิ้นไข่ดาว 🐖🌶️</span>
+          <span class="right">
+            <span class="price">55฿</span>
+            <button class="copy-btn" onclick="copyText('กะเพราหมูชิ้นไข่ดาว 55฿')">📋 Copy</button>
+          </span>
+        </li>
+
+        <li class="lineitem">
+          <span class="name">กะเพรากุ้งไข่ดาว 🦐🌶️</span>
+          <span class="right">
+            <span class="price">70฿</span>
+            <button class="copy-btn" onclick="copyText('กะเพรากุ้งไข่ดาว 70฿')">📋 Copy</button>
+          </span>
+        </li>
+
+        <li class="lineitem">
+          <span class="name">กะเพราหมูยอไข่ดาว 🐖🌶️</span>
+          <span class="right">
+            <span class="price">55฿</span>
+            <button class="copy-btn" onclick="copyText('กะเพราหมูยอไข่ดาว 55฿')">📋 Copy</button>
+          </span>
+        </li>
+
+        <li class="lineitem">
+          <span class="name">กะเพรากุนเชียงไข่ดาว 🧄🐖🌶️</span>
+          <span class="right">
+            <span class="price">55฿</span>
+            <button class="copy-btn" onclick="copyText('กะเพรากุนเชียงไข่ดาว 55฿')">📋 Copy</button>
+          </span>
+        </li>
+
+        <li class="lineitem">
+          <span class="name">กะเพราปลากระป๋องไข่ดาว 🥚🍽️</span>
+          <span class="right">
+            <span class="price">55฿</span>
+            <button class="copy-btn" onclick="copyText('กะเพราปลากระป๋องไข่ดาว 55฿')">📋 Copy</button>
+          </span>
+        </li>
+      </ul>
+    </section>
+
+    <!-- หมวดกระเทียม -->
+    <section class="section p-5">
+      <h2 class="text-xl font-extrabold mb-1">หมวดกระเทียม</h2>
+      <p class="text-xs text-neutral-600 mb-4">หอมกระเทียมเจียว กลมกล่อม เด็กกินได้</p>
+      <ul>
+        <li class="lineitem">
+          <span class="name">ไก่กระเทียมไข่ดาว 🐓🧄 <span class="pill pill-best">แนะนำ</span></span>
+          <span class="right">
+            <span class="price">50฿</span>
+            <button class="copy-btn" onclick="copyText('ไก่กระเทียมไข่ดาว 50฿')">📋 Copy</button>
+          </span>
+        </li>
+
+        <li class="lineitem">
+          <span class="name">หมูกรอบกระเทียมไข่ดาว 🐖🧄🍳 <span class="pill pill-hot">แนะนำ Hot</span></span>
+          <span class="right">
+            <span class="price">65฿</span>
+            <button class="copy-btn" onclick="copyText('หมูกรอบกระเทียมไข่ดาว 65฿')">📋 Copy</button>
+          </span>
+        </li>
+
+        <li class="lineitem">
+          <span class="name">หมูกระเทียมไข่ดาว 🐷🧄🌶️</span>
+          <span class="right">
+            <span class="price">55฿</span>
+            <button class="copy-btn" onclick="copyText('หมูกระเทียมไข่ดาว 55฿')">📋 Copy</button>
+          </span>
+        </li>
+
+        <li class="lineitem">
+          <span class="name">กุ้งกระเทียมไข่ดาว 🧄🥚🦐</span>
+          <span class="right">
+            <span class="price">70฿</span>
+            <button class="copy-btn" onclick="copyText('กุ้งกระเทียมไข่ดาว 70฿')">📋 Copy</button>
+          </span>
+        </li>
+      </ul>
+    </section>
+
+    <!-- หมวดผัดพริกแกง -->
+    <section class="section p-5">
+      <h2 class="text-xl font-extrabold mb-1">หมวดผัดพริกแกง</h2>
+      <p class="text-xs text-neutral-600 mb-4">เข้มข้น จัดจ้าน ครบเครื่อง</p>
+      <ul>
+        <li class="lineitem">
+          <span class="name">หน่อไม้เหลือง/ขาว หมูชิ้น ไข่ดาว 🌶️🐷🍳 <span class="pill pill-best">แนะนำ</span></span>
+          <span class="right">
+            <span class="price">60฿</span>
+            <button class="copy-btn" onclick="copyText('ผัดพริกแกงหน่อไม้ หมูชิ้น ไข่ดาว 60฿')">📋 Copy</button>
+          </span>
+        </li>
+
+        <li class="lineitem">
+          <span class="name">ผัดพริกแกงไก่ไข่ดาว 🌶️🥚🐓 <span class="pill pill-best">แนะนำ</span></span>
+          <span class="right">
+            <span class="price">55฿</span>
+            <button class="copy-btn" onclick="copyText('ผัดพริกแกงไก่ไข่ดาว 55฿')">📋 Copy</button>
+          </span>
+        </li>
+
+        <li class="lineitem">
+          <span class="name">ผัดพริกหยวก ไก่/หมู ไข่ดาว 🌶️🥚</span>
+          <span class="right">
+            <span class="price">55฿</span>
+            <button class="copy-btn" onclick="copyText('ผัดพริกหยวก ไก่/หมู ไข่ดาว 55฿')">📋 Copy</button>
+          </span>
+        </li>
+
+        <li class="lineitem">
+          <span class="name">ผัดพริกแกงถั่ว ใส่ไก่/หมู ไข่ดาว 🐓🐖🥚🌶️</span>
+          <span class="right">
+            <span class="price">55฿</span>
+            <button class="copy-btn" onclick="copyText('ผัดพริกแกงถั่ว ใส่ไก่/หมู ไข่ดาว 55฿')">📋 Copy</button>
+          </span>
+        </li>
+
+        <li class="lineitem">
+          <span class="name">ผัดพริกแกงหมูกรอบไข่ดาว 🐷🍳🥚</span>
+          <span class="right">
+            <span class="price">75฿</span>
+            <button class="copy-btn" onclick="copyText('ผัดพริกแกงหมูกรอบไข่ดาว 75฿')">📋 Copy</button>
+          </span>
+        </li>
+      </ul>
+    </section>
+
+    <!-- เมนูพิเศษ & อื่น ๆ -->
+    <section class="section p-5">
+      <h2 class="text-xl font-extrabold mb-1">เมนูพิเศษ & อื่น ๆ</h2>
+      <p class="text-xs text-neutral-600 mb-4">เลือกเพิ่มความอร่อยได้ตามใจ</p>
+      <ul>
+        <li class="lineitem">
+          <span class="name">หมูกรอบทอดน้ำปลาไข่ดาว 🐷🍽️🥚</span>
+          <span class="right">
+            <span class="price">75฿</span>
+            <button class="copy-btn" onclick="copyText('หมูกรอบทอดน้ำปลาไข่ดาว 75฿')">📋 Copy</button>
+          </span>
+        </li>
+
+        <li class="lineitem">
+          <span class="name">ไข่เจียวหมูสับ — ไข่ 1 ใบ / 2 ใบ 🐖🥚</span>
+          <span class="right">
+            <span class="price">45฿ / 55฿</span>
+            <button class="copy-btn" onclick="copyText('ไข่เจียวหมูสับ 1 ใบ 45฿ / 2 ใบ 55฿')">📋 Copy</button>
+          </span>
+        </li>
+      </ul>
+    </section>
+
+    <!-- เครื่องเคียง -->
+    <section class="section p-5">
+      <h2 class="text-xl font-extrabold">เครื่องเคียง +10฿/อย่าง</h2>
+      <div class="mt-3 grid grid-cols-2 sm:grid-cols-5 gap-2 text-[15px]">
+        <div class="rounded-2xl border border-neutral-200 bg-white px-3 py-2">
+          ไข่ดาว
+          <button class="copy-btn" style="margin-left:.5rem" onclick="copyText('เพิ่มไข่ดาว +10฿')">📋</button>
+        </div>
+        <div class="rounded-2xl border border-neutral-200 bg-white px-3 py-2">
+          ไข่เจียว
+          <button class="copy-btn" style="margin-left:.5rem" onclick="copyText('เพิ่มไข่เจียว +10฿')">📋</button>
+        </div>
+        <div class="rounded-2xl border border-neutral-200 bg-white px-3 py-2">
+          กุนเชียง
+          <button class="copy-btn" style="margin-left:.5rem" onclick="copyText('เพิ่มกุนเชียง +10฿')">📋</button>
+        </div>
+        <div class="rounded-2xl border border-neutral-200 bg-white px-3 py-2">
+          หมูยอ
+          <button class="copy-btn" style="margin-left:.5rem" onclick="copyText('เพิ่มหมูยอ +10฿')">📋</button>
+        </div>
+        <div class="rounded-2xl border border-neutral-200 bg-white px-3 py-2">
+          ไข่เยี่ยวม้า
+          <button class="copy-btn" style="margin-left:.5rem" onclick="copyText('เพิ่มไข่เยี่ยวม้า +10฿')">📋</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="text-center text-neutral-500 text-sm pb-8">
+    © <span id="year"></span> กระเพรายายหนุ่ย — พิมพ์สั่งทาง LINE ได้เลย
+  </footer>
+
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  function copyText(text) {
+    navigator.clipboard.writeText(text).then(() => {
+      Swal.fire({
+        title: 'คัดลอกแล้ว!',
+        text: text,
+        icon: 'success',
+        confirmButtonText: 'โอเค',
+        confirmButtonColor: '#047857'
+      });
+    }).catch(err => {
+      Swal.fire({
+        title: 'เกิดข้อผิดพลาด',
+        text: 'ไม่สามารถคัดลอกได้',
+        icon: 'error',
+        confirmButtonText: 'ลองอีกครั้ง'
+      });
+      console.error('ไม่สามารถคัดลอก: ', err);
+    });
+  }
+</script>
+
+</body>
+</html>
