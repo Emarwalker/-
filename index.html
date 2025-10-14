@@ -3,353 +3,403 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>เมนูข้าวกะเพรายายหนุ่ย รังสิต</title>
-
-  <!-- Tailwind -->
+  <title>เมนูข้าวกะเพรายายหนุ่ย — รายการบรรทัดเดียว</title>
   <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- SweetAlert2 -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-  <!-- Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-
   <style>
-    body { font-family: 'Noto Sans Thai', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; counter-reset: item; }
-
-    /* Badges */
-    .pill { display:inline-flex; align-items:center; gap:4px; border-radius:9999px; padding:2px 10px; font-size:11px; font-weight:600; }
-    .pill-hot { background:#fee2e2; color:#b91c1c; }
-    .pill-best { background:#fef3c7; color:#b45309; }
-    .pill-discount { background:#dcfce7; color:#166534; }
-
-    /* List item */
-    .lineitem { display:flex; align-items:center; justify-content:space-between; gap:.75rem; border-bottom:1px solid #f5f5f5; padding:1rem 0; }
-    .name { font-weight:600; line-height:1.2; position:relative; }
-    .name::before { counter-increment:item; content: counter(item) ") "; color:#9ca3af; font-weight:800; margin-right:.25rem; }
-    .price { font-variant-numeric:tabular-nums; font-weight:800; color:#047857; white-space:nowrap; }
-    .section { border-radius:1.5rem; background:white; border:1px solid #e5e7eb; }
-
-    /* ด้านขวา (ราคา + ปุ่มคัดลอก) — แตะทั้งก้อนเพื่อคัดลอก */
-    .right { display:flex; align-items:center; gap:.5rem; min-height:44px; }
-
-    /* ปุ่มคัดลอก (ยังคงมีไว้ให้เห็นชัด แต่แตะทั้งก้อนก็ได้) */
-    .copy-btn{
-      background:#f3f4f6; border:1px solid #d1d5db; border-radius:10px;
-      padding:8px 12px; font-size:14px; line-height:1;
-      min-width:44px; min-height:44px;
-      cursor:pointer; transition:background .2s, transform .02s;
+    :root{
+      --brand:#10b981; --ink:#0f172a; --muted:#6b7280; --line:#e5e7eb;
     }
-    .copy-btn:hover{ background:#e5e7eb; }
-    .copy-btn:active{ transform:scale(.98); }
-
-    /* QR image */
-    .qr-img{ border-radius:1rem; border:1px solid #e5e7eb; box-shadow:0 2px 8px rgba(0,0,0,.05); }
+    body{ font-family:'Noto Sans Thai',system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial; color:var(--ink); }
+    .section{ border:1px solid var(--line); border-radius:1.25rem; background:#fff; box-shadow:0 6px 18px rgba(2,8,23,.04); }
+    /* แถวเมนู: ทุกอย่างบรรทัดเดียว */
+    .lineitem{ display:flex; align-items:center; justify-content:space-between; gap:.5rem; border-bottom:1px solid #f5f5f5; padding:.5rem .25rem; }
+    .lineitem:last-child{ border-bottom:0; }
+    .name{ font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .controls{ display:flex; align-items:center; gap:.5rem; flex-shrink:0; }
+    .qtybox{ display:flex; align-items:center; border:1px solid var(--line); border-radius:9999px; overflow:hidden; background:#f9fafb; }
+    .qtybtn{ padding:.45rem .7rem; font-weight:700; }
+    .qtybtn:active{ transform:scale(.96); }
+    .qtyinput{ width:3rem; text-align:center; outline:none; border-left:1px solid var(--line); border-right:1px solid var(--line); background:#fff; }
+    .optbtn{ border:1px solid var(--line); border-radius:12px; padding:.45rem .7rem; font-size:.9rem; background:#fff; }
+    .price{ font-variant-numeric:tabular-nums; font-weight:800; color:#065f46; width:56px; text-align:right; }
+    .pill-hot{ background:#fee2e2; color:#b91c1c; font-size:11px; padding:2px 8px; border-radius:9999px; margin-left:.4rem; }
+    .lineitem:hover{ background:#fafafa; }
+    #mini-cart .bubble{ background:#059669; color:#fff; border-radius:9999px; box-shadow:0 10px 22px rgba(5,150,105,.35); }
   </style>
 </head>
 <body class="bg-neutral-50 text-neutral-900">
   <header class="py-7 text-center bg-white border-b border-neutral-200">
-    <h1 class="text-2xl md:text-3xl font-extrabold">เมนูข้าวกะเพรายายหนุ่ย รังสิต</h1>
-    <p class="text-xs md:text-sm text-neutral-600">ดูเมนูแล้วพิมพ์สั่งทาง LINE ได้เลย</p>
+    <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight">เมนูข้าวกะเพรายายหนุ่ย</h1>
+    <p class="text-xs md:text-sm text-neutral-600 mt-1">แตะ “ตัวเลือก…” เพื่อกำหนด เครื่องเคียง/เผ็ด/ปริมาณ แล้วใส่จำนวน จากนั้นกด “ยืนยันและคัดลอกคำสั่งซื้อ” ครั้งเดียว</p>
   </header>
 
-  <main class="max-w-3xl mx-auto px-4 py-8 space-y-8">
+  <main class="max-w-3xl mx-auto px-4 py-6 space-y-6">
 
-    <!-- QR Code -->
+    <!-- QR -->
     <section class="section p-5 text-center">
       <h2 class="text-xl font-extrabold mb-2">สั่งผ่าน LINE</h2>
       <p class="text-sm text-neutral-600 mb-4">สแกน QR Code เพื่อแอดไลน์สั่งเมนูได้เลย</p>
-      <img src="S_gainfriends_2dbarcodes_GW.png" alt="LINE QR Code"
-           class="qr-img mx-auto w-56 h-56 object-contain md:w-48 md:h-48"
-           loading="lazy" decoding="async">
-      <p class="text-sm text-neutral-500 mt-2">
-        หรือคลิก
-        <a href="https://lin.ee/HIvWixE" target="_blank" class="text-green-600 font-bold hover:underline">ที่นี่</a>
+      <img src="S_gainfriends_2dbarcodes_GW.png" alt="LINE QR Code" class="mx-auto w-56 h-56 object-contain rounded-xl border border-neutral-200 shadow" loading="lazy" decoding="async">
+      <p class="text-sm text-neutral-500 mt-2">หรือคลิก
+        <a href="https://lin.ee/HIvWixE" target="_blank" rel="noopener" class="text-emerald-600 font-bold hover:underline">ที่นี่</a>
         เพื่อเพิ่มเพื่อนใน LINE
       </p>
     </section>
 
-    <!-- หมวดกะเพรา -->
-    <section class="section p-5">
-      <h2 class="text-xl font-extrabold mb-1">หมวดกะเพรา</h2>
-      <p class="text-xs text-neutral-600 mb-4">เผ็ดหอมใบกะเพรา ผัดร้อน ๆ ถึงใจ</p>
-      <ul>
-        <li class="lineitem">
-          <span class="name">
-            กะเพราหมูสับไข่ดาว 🐷🍳
-            <span class="pill pill-best">แนะนำ</span>
-            <span class="pill pill-discount">ลด 10฿</span>
-          </span>
-          <span class="right copy-area" data-copy="กะเพราหมูสับไข่ดาว 55฿ (จาก 65฿)">
-            <span class="price"><del class="text-neutral-400">65฿</del> 55฿</span>
-            <button class="copy-btn" aria-label="คัดลอก">📋</button>
-          </span>
-        </li>
+    <!-- เมนู -->
+    <div id="menu-container" class="space-y-6"></div>
 
-        <li class="lineitem">
-          <span class="name">
-            กะเพราไก่ไข่ดาว 🐓🍳
-            <span class="pill pill-best">แนะนำ</span>
-            <span class="pill pill-discount">ลด 5฿</span>
-          </span>
-          <span class="right copy-area" data-copy="กะเพราไก่ไข่ดาว 50฿ (จาก 55฿)">
-            <span class="price"><del class="text-neutral-400">55฿</del> 50฿</span>
-            <button class="copy-btn" aria-label="คัดลอก">📋</button>
-          </span>
-        </li>
-
-        <li class="lineitem">
-          <span class="name">
-            กะเพราหมูกรอบไข่ดาว 🐖🍳
-            <span class="pill pill-hot">แนะนำ Hot</span>
-            <span class="pill pill-discount">ลด 20฿</span>
-          </span>
-          <span class="right copy-area" data-copy="กะเพราหมูกรอบไข่ดาว 65฿ (จาก 85฿)">
-            <span class="price"><del class="text-neutral-400">85฿</del> 65฿</span>
-            <button class="copy-btn" aria-label="คัดลอก">📋</button>
-          </span>
-        </li>
-
-        <li class="lineitem">
-          <span class="name">กะเพราเครื่องในไก่ไข่ดาว 🐓🍳</span>
-          <span class="right copy-area" data-copy="กะเพราเครื่องในไก่ไข่ดาว 50฿">
-            <span class="price">50฿</span>
-            <button class="copy-btn" aria-label="คัดลอก">📋</button>
-          </span>
-        </li>
-
-        <li class="lineitem">
-          <span class="name">กะเพราหมูสับไข่เยี่ยวม้า 🥚🐖</span>
-          <span class="right copy-area" data-copy="กะเพราหมูสับไข่เยี่ยวม้า 70฿">
-            <span class="price">70฿</span>
-            <button class="copy-btn" aria-label="คัดลอก">📋</button>
-          </span>
-        </li>
-
-        <li class="lineitem">
-          <span class="name">กะเพราหมูชิ้นไข่ดาว 🐖🌶️</span>
-          <span class="right copy-area" data-copy="กะเพราหมูชิ้นไข่ดาว 55฿">
-            <span class="price">55฿</span>
-            <button class="copy-btn" aria-label="คัดลอก">📋</button>
-          </span>
-        </li>
-
-        <li class="lineitem">
-          <span class="name">กะเพรากุ้งไข่ดาว 🦐🌶️</span>
-          <span class="right copy-area" data-copy="กะเพรากุ้งไข่ดาว 70฿">
-            <span class="price">70฿</span>
-            <button class="copy-btn" aria-label="คัดลอก">📋</button>
-          </span>
-        </li>
-
-        <li class="lineitem">
-          <span class="name">กะเพราหมูยอไข่ดาว 🐖🌶️</span>
-          <span class="right copy-area" data-copy="กะเพราหมูยอไข่ดาว 55฿">
-            <span class="price">55฿</span>
-            <button class="copy-btn" aria-label="คัดลอก">📋</button>
-          </span>
-        </li>
-
-        <li class="lineitem">
-          <span class="name">กะเพรากุนเชียงไข่ดาว 🧄🐖🌶️</span>
-          <span class="right copy-area" data-copy="กะเพรากุนเชียงไข่ดาว 55฿">
-            <span class="price">55฿</span>
-            <button class="copy-btn" aria-label="คัดลอก">📋</button>
-          </span>
-        </li>
-
-        <li class="lineitem">
-          <span class="name">กะเพราปลากระป๋องไข่ดาว 🥚🍽️</span>
-          <span class="right copy-area" data-copy="กะเพราปลากระป๋องไข่ดาว 55฿">
-            <span class="price">55฿</span>
-            <button class="copy-btn" aria-label="คัดลอก">📋</button>
-          </span>
-        </li>
-      </ul>
-    </section>
-
-    <!-- หมวดกระเทียม -->
-    <section class="section p-5">
-      <h2 class="text-xl font-extrabold mb-1">หมวดกระเทียม</h2>
-      <p class="text-xs text-neutral-600 mb-4">หอมกระเทียมเจียว กลมกล่อม เด็กกินได้</p>
-      <ul>
-        <li class="lineitem">
-          <span class="name">ไก่กระเทียมไข่ดาว 🐓🧄 <span class="pill pill-best">แนะนำ</span></span>
-          <span class="right copy-area" data-copy="ไก่กระเทียมไข่ดาว 50฿">
-            <span class="price">50฿</span>
-            <button class="copy-btn" aria-label="คัดลอก">📋</button>
-          </span>
-        </li>
-
-        <li class="lineitem">
-          <span class="name">หมูกรอบกระเทียมไข่ดาว 🐖🧄🍳 <span class="pill pill-hot">แนะนำ Hot</span></span>
-          <span class="right copy-area" data-copy="หมูกรอบกระเทียมไข่ดาว 65฿">
-            <span class="price">65฿</span>
-            <button class="copy-btn" aria-label="คัดลอก">📋</button>
-          </span>
-        </li>
-
-        <li class="lineitem">
-          <span class="name">หมูกระเทียมไข่ดาว 🐷🧄🌶️</span>
-          <span class="right copy-area" data-copy="หมูกระเทียมไข่ดาว 55฿">
-            <span class="price">55฿</span>
-            <button class="copy-btn" aria-label="คัดลอก">📋</button>
-          </span>
-        </li>
-
-        <li class="lineitem">
-          <span class="name">กุ้งกระเทียมไข่ดาว 🧄🥚🦐</span>
-          <span class="right copy-area" data-copy="กุ้งกระเทียมไข่ดาว 70฿">
-            <span class="price">70฿</span>
-            <button class="copy-btn" aria-label="คัดลอก">📋</button>
-          </span>
-        </li>
-      </ul>
-    </section>
-
-    <!-- หมวดผัดพริกแกง -->
-    <section class="section p-5">
-      <h2 class="text-xl font-extrabold mb-1">หมวดผัดพริกแกง</h2>
-      <p class="text-xs text-neutral-600 mb-4">เข้มข้น จัดจ้าน ครบเครื่อง</p>
-      <ul>
-        <li class="lineitem">
-          <span class="name">หน่อไม้เหลือง/ขาว หมูชิ้น ไข่ดาว 🌶️🐷🍳 <span class="pill pill-best">แนะนำ</span></span>
-          <span class="right copy-area" data-copy="ผัดพริกแกงหน่อไม้ หมูชิ้น ไข่ดาว 60฿">
-            <span class="price">60฿</span>
-            <button class="copy-btn" aria-label="คัดลอก">📋</button>
-          </span>
-        </li>
-
-        <li class="lineitem">
-          <span class="name">ผัดพริกแกงไก่ไข่ดาว 🌶️🥚🐓 <span class="pill pill-best">แนะนำ</span></span>
-          <span class="right copy-area" data-copy="ผัดพริกแกงไก่ไข่ดาว 55฿">
-            <span class="price">55฿</span>
-            <button class="copy-btn" aria-label="คัดลอก">📋</button>
-          </span>
-        </li>
-
-        <li class="lineitem">
-          <span class="name">ผัดพริกหยวก ไก่/หมู ไข่ดาว 🌶️🥚</span>
-          <span class="right copy-area" data-copy="ผัดพริกหยวก ไก่/หมู ไข่ดาว 55฿">
-            <span class="price">55฿</span>
-            <button class="copy-btn" aria-label="คัดลอก">📋</button>
-          </span>
-        </li>
-
-        <li class="lineitem">
-          <span class="name">ผัดพริกแกงถั่ว ใส่ไก่/หมู ไข่ดาว 🐓🐖🥚🌶️</span>
-          <span class="right copy-area" data-copy="ผัดพริกแกงถั่ว ใส่ไก่/หมู ไข่ดาว 55฿">
-            <span class="price">55฿</span>
-            <button class="copy-btn" aria-label="คัดลอก">📋</button>
-          </span>
-        </li>
-
-        <li class="lineitem">
-          <span class="name">ผัดพริกแกงหมูกรอบไข่ดาว 🐷🍳🥚</span>
-          <span class="right copy-area" data-copy="ผัดพริกแกงหมูกรอบไข่ดาว 75฿">
-            <span class="price">75฿</span>
-            <button class="copy-btn" aria-label="คัดลอก">📋</button>
-          </span>
-        </li>
-      </ul>
-    </section>
-
-    <!-- เมนูพิเศษ & อื่น ๆ -->
-    <section class="section p-5">
-      <h2 class="text-xl font-extrabold mb-1">เมนูพิเศษ & อื่น ๆ</h2>
-      <p class="text-xs text-neutral-600 mb-4">เลือกเพิ่มความอร่อยได้ตามใจ</p>
-      <ul>
-        <li class="lineitem">
-          <span class="name">หมูกรอบทอดน้ำปลาไข่ดาว 🐷🍽️🥚</span>
-          <span class="right copy-area" data-copy="หมูกรอบทอดน้ำปลาไข่ดาว 75฿">
-            <span class="price">75฿</span>
-            <button class="copy-btn" aria-label="คัดลอก">📋</button>
-          </span>
-        </li>
-
-        <li class="lineitem">
-          <span class="name">ไข่เจียวหมูสับ — ไข่ 1 ใบ / 2 ใบ 🐖🥚</span>
-          <span class="right copy-area" data-copy="ไข่เจียวหมูสับ 1 ใบ 45฿ / 2 ใบ 55฿">
-            <span class="price">45฿ / 55฿</span>
-            <button class="copy-btn" aria-label="คัดลอก">📋</button>
-          </span>
-        </li>
-      </ul>
-    </section>
-
-    <!-- เครื่องเคียง -->
-    <section class="section p-5">
-      <h2 class="text-xl font-extrabold">เครื่องเคียง +10฿/อย่าง</h2>
-      <div class="mt-3 grid grid-cols-2 sm:grid-cols-5 gap-2 text-[15px]">
-        <div class="rounded-2xl border border-neutral-200 bg-white px-3 py-2 copy-area" data-copy="เพิ่มไข่ดาว +10฿">
-          ไข่ดาว
-          <button class="copy-btn" style="margin-left:.5rem" aria-label="คัดลอก">📋</button>
-        </div>
-        <div class="rounded-2xl border border-neutral-200 bg-white px-3 py-2 copy-area" data-copy="เพิ่มไข่เจียว +10฿">
-          ไข่เจียว
-          <button class="copy-btn" style="margin-left:.5rem" aria-label="คัดลอก">📋</button>
-        </div>
-        <div class="rounded-2xl border border-neutral-200 bg-white px-3 py-2 copy-area" data-copy="เพิ่มกุนเชียง +10฿">
-          กุนเชียง
-          <button class="copy-btn" style="margin-left:.5rem" aria-label="คัดลอก">📋</button>
-        </div>
-        <div class="rounded-2xl border border-neutral-200 bg-white px-3 py-2 copy-area" data-copy="เพิ่มหมูยอ +10฿">
-          หมูยอ
-          <button class="copy-btn" style="margin-left:.5rem" aria-label="คัดลอก">📋</button>
-        </div>
-        <div class="rounded-2xl border border-neutral-200 bg-white px-3 py-2 copy-area" data-copy="เพิ่มไข่เยี่ยวม้า +10฿">
-          ไข่เยี่ยวม้า
-          <button class="copy-btn" style="margin-left:.5rem" aria-label="คัดลอก">📋</button>
+    <!-- ปุ่มล่าง (fixed) -->
+    <section class="section p-4">
+      <div id="fixed-buttons" class="fixed bottom-0 left-0 right-0 bg-white border-t border-neutral-200 shadow-lg z-50 px-4 py-3">
+        <div class="max-w-3xl mx-auto flex items-center gap-3">
+          <button class="flex-1 py-3 font-bold rounded-xl bg-emerald-600 text-white shadow hover:brightness-105"
+                  onclick="location.href='https://lin.ee/HIvWixE'">เปิด LINE เพื่อสั่ง</button>
+          <button class="px-4 py-3 rounded-xl border border-neutral-300 font-bold bg-white hover:bg-neutral-50"
+                  onclick="buildAndCopyOrder()">ยืนยันและคัดลอกคำสั่งซื้อ</button>
         </div>
       </div>
     </section>
 
-    <!-- Spacer for bottom bar (mobile) -->
-    <div class="h-20 md:hidden"></div>
-  </main>
-
-  <!-- แถบล่างสำหรับมือถือ -->
-  <div class="fixed inset-x-0 bottom-0 z-20 md:hidden">
-    <div class="mx-auto max-w-3xl px-4 pb-4">
-      <div class="bg-white border border-neutral-200 shadow-lg rounded-2xl p-3 flex items-center gap-3">
-        <button class="flex-1 py-3 font-bold rounded-xl bg-emerald-600 text-white"
-                onclick="location.href='https://lin.ee/HIvWixE'">
-          เปิด LINE เพื่อสั่ง
-        </button>
-        <button class="px-4 py-3 rounded-xl border border-neutral-300"
-                onclick="copyText('ตัวอย่างวิธีสั่ง: กะเพราหมูสับไข่ดาว 1 ที่ + ไข่ดาว 1 ฟอง (เผ็ดกลาง)')">
-          คัดลอกวิธีสั่ง
-        </button>
+    <!-- mini cart -->
+    <div id="mini-cart" class="fixed right-4 bottom-24 sm:bottom-8 z-30 hidden">
+      <div class="bubble px-4 py-2 text-sm font-bold">
+        <span id="mini-count">0</span> รายการ • <span id="mini-total">0</span>฿
       </div>
     </div>
-  </div>
 
-  <footer class="text-center text-neutral-500 text-sm pb-8">
-    © <span id="year"></span> กระเพรายายหนุ่ย — พิมพ์สั่งทาง LINE ได้เลย
-  </footer>
+    <footer class="text-center text-neutral-500 text-sm pb-4">© <span id="year"></span> กระเพรายายหนุ่ย</footer>
+  </main>
 
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
 
-    function copyText(text){
-      navigator.clipboard.writeText(text).then(()=>{
-        Swal.fire({
-          toast:true, position:'bottom', timer:1600, timerProgressBar:true,
-          showConfirmButton:false, icon:'success',
-          title:'คัดลอกแล้ว', text:text, background:'#f0fdf4'
+    // ========== CONFIG ==========
+    const ADDONS   = ['ไข่ดาว','ไข่เจียว','กุนเชียง','หมูยอ','ไข่เยี่ยวม้า'];
+    const ADDON_PRICE = 10;
+    const SPICES   = ['เผ็ด','เผ็ดกลาง','เผ็ดน้อย','ไม่เผ็ด'];
+    const PORTIONS = [{label:'ปกติ', add:0}, {label:'พิเศษ', add:10}];
+
+    // จัดหมวดหมู่ + รายการ
+    const CATEGORIES = [
+      {
+        title:'หมวดกะเพรา', desc:'เผ็ดหอมใบกะเพรา ผัดร้อน ๆ ถึงใจ',
+        items:[
+          { name:'กระเพราหมูสับ', price:45,hot:true },
+          { name:'กระเพราไก่', price:40, hot:true },
+          { name:'กระเพราหมูกรอบ', price:55, hot:true },
+          { name:'กระเพราเครื่องในไก่', price:40 },
+          { name:'กระเพราหมูชิ้น', price:45 },
+          { name:'กระเพรากุ้ง', price:60 },
+          { name:'กระเพราหมูยอ', price:45 },
+          { name:'กระเพรากุนเชียง', price:45 },
+          { name:'กระเพราปลากระป๋อง', price:45 },
+          { name:'กระเพราหมูสับไข่เยี่ยวม้า', price:60 }
+        ]
+      },
+      {
+        title:'หมวดกระเทียม', desc:'หอมกระเทียมเจียว เด็กกินได้',
+        items:[
+          { name:'ไก่กระเทียม', price:40, hot:true},
+          { name:'หมูกระเทียม', price:45 },
+          { name:'หมูกรอบกระเทียม', price:55 ,hot:true},
+          { name:'กุ้งกระเทียม', price:60 }
+        ]
+      },
+      {
+        title:'หมวดผัดพริกแกง', desc:'เข้มข้น จัดจ้าน ครบเครื่อง',
+        items:[
+          { name:'ผัดพริกแกงหน่อไม้เหลือง/ขาวหมูชิ้น', price:50 ,hot:true},
+          { name:'ผัดพริกแกงไก่', price:45 },
+          { name:'ผัดพริกหยวกไก่/หมู', price:45, proteins:['ไก่','หมู'] },
+          { name:'ผัดพริกแกงถั่วใส่ไก่', price:45 },
+          { name:'ผัดพริกแกงหมูกรอบ', price:65 }
+        ]
+      },
+      {
+        title:'เมนูพิเศษ & อื่น ๆ', desc:'เลือกเพิ่มความอร่อยได้ตามใจ',
+        items:[
+          { name:'ไข่เจียวหมูสับ (1 ฟอง)', price:35 },
+          { name:'ไข่เจียวหมูสับ (2 ฟอง)', price:45 ,hot:true},
+          { name:'หมูกรอบทอดน้ำปลา', price:65 }
+        ]
+      }
+    ];
+
+    // ========== RENDER ==========
+    const container = document.getElementById('menu-container');
+
+    function render(){
+      container.innerHTML = '';
+      CATEGORIES.forEach(cat=>{
+        const sec = document.createElement('section');
+        sec.className = 'section p-5';
+        sec.innerHTML = `
+          <div class="flex items-baseline justify-between mb-3">
+            <h2 class="text-lg font-extrabold">${cat.title}</h2>
+            <p class="text-xs text-neutral-500">${cat.desc||''}</p>
+          </div>
+          <ul class="divide-y divide-neutral-100"></ul>`;
+        const ul = sec.querySelector('ul');
+
+        cat.items.forEach(m=>{
+          const li = document.createElement('li');
+          li.className = 'lineitem';
+          li.dataset.item  = m.name;
+          li.dataset.price = m.price;
+          if(m.proteins) li.dataset.proteins = m.proteins.join(',');
+
+          li.innerHTML = `
+            <div class="flex items-center flex-1 gap-2 min-w-0">
+              <span class="name">${m.name}</span>
+              ${m.hot ? `<span class="pill-hot">Hot</span>` : ''}
+            </div>
+            <div class="controls">
+              <div class="qtybox">
+                <button type="button" class="qtybtn dec" aria-label="ลดจำนวน">−</button>
+                <input type="number" class="qtyinput qty" value="0" min="0" aria-label="จำนวน">
+                <button type="button" class="qtybtn inc" aria-label="เพิ่มจำนวน">+</button>
+              </div>
+              <button type="button" class="optbtn">ตัวเลือก…</button>
+              <div class="price">${m.price}฿</div>
+            </div>`;
+          ul.appendChild(li);
         });
-      }).catch(()=>{
-        Swal.fire({ icon:'error', title:'ไม่สามารถคัดลอกได้' });
+
+        container.appendChild(sec);
+      });
+
+      wireUp();
+    }
+
+    // ========== BEHAVIOR ==========
+    function wireUp(){
+      document.querySelectorAll('.lineitem').forEach(li=>{
+        if(!li.dataset.addons) li.dataset.addons = '';
+
+        const dec = li.querySelector('.dec');
+        const inc = li.querySelector('.inc');
+        const qty = li.querySelector('.qty');
+        const onChange = ()=>{ updateBadge(li); recalcTotals(); };
+        dec.addEventListener('click', ()=>{ qty.stepDown(); onChange(); });
+        inc.addEventListener('click', ()=>{ qty.stepUp(); onChange(); });
+        qty.addEventListener('input', onChange);
+        qty.addEventListener('change', onChange);
+
+        li.querySelector('.optbtn').addEventListener('click', ()=> openOptions(li));
+        updateBadge(li);
       });
     }
 
-    // แตะ "ทั้งก้อนด้านขวา" หรือการ์ดเครื่องเคียงเพื่อคัดลอก
-    document.addEventListener('click', (e)=>{
-      const area = e.target.closest('.copy-area');
-      if(area){
-        copyText(area.dataset.copy || area.getAttribute('data-copy') || '');
+    function openOptions(li){
+      const selAddons = (li.dataset.addons||'').split(',').map(s=>s.trim()).filter(Boolean);
+      const selSpice  = li.dataset.spice || '';
+      const selPortion= li.dataset.portion || '';
+      const proteins  = (li.dataset.proteins||'').split(',').filter(Boolean);
+      const selProtein= li.dataset.protein || (proteins[0]||'');
+
+      const addChk = ADDONS.map(a=>{
+        const checked = selAddons.includes(a) ? 'checked' : '';
+        return `<label style="display:flex;align-items:center;gap:.5rem;margin:.25rem 0;">
+                  <input type='checkbox' class='addon' value='${a}' ${checked}> ${a}
+                  <span class='text-neutral-500'>+${ADDON_PRICE}฿</span>
+                </label>`;
+      }).join('');
+
+      const spiceRad = SPICES.map(s=>{
+        const checked = (s===selSpice) ? 'checked' : '';
+        return `<label style="display:flex;align-items:center;gap:.5rem;margin:.25rem 0;">
+                  <input type='radio' name='spice' value='${s}' ${checked}> ${s}
+                </label>`;
+      }).join('');
+
+      const portionRad = PORTIONS.map(p=>{
+        const checked = (p.label===selPortion) ? 'checked' : '';
+        const extra = p.add>0 ? ` +${p.add}฿` : '';
+        return `<label style="display:flex;align-items:center;gap:.5rem;margin:.25rem 0;">
+                  <input type='radio' name='portion' value='${p.label}' data-add='${p.add}' ${checked}> ${p.label}${extra}
+                </label>`;
+      }).join('');
+
+      const proteinRad = proteins.length ? (
+        `<hr style="margin:.75rem 0">
+         <div style="margin:.25rem 0 .5rem;font-weight:700">โปรตีน (0฿)</div>` +
+        proteins.map(p=>{
+          const checked = (p===selProtein) ? 'checked' : '';
+          return `<label style="display:flex;align-items:center;gap:.5rem;margin:.25rem 0;">
+                    <input type='radio' name='protein' value='${p}' ${checked}> ${p}
+                  </label>`;
+        }).join('')
+      ) : '';
+
+      Swal.fire({
+        title: `ตัวเลือก — ${li.dataset.item}`,
+        html:
+          `<div style="text-align:left">
+             <div style="margin:.25rem 0 .5rem;font-weight:700">เครื่องเคียง (+${ADDON_PRICE}฿/อย่าง)</div>${addChk}
+             <hr style="margin:.75rem 0">
+             <div style="margin:.25rem 0 .5rem;font-weight:700">ระดับความเผ็ด <span style="color:#ef4444">(จำเป็น)</span></div>${spiceRad}
+             <hr style="margin:.75rem 0">
+             <div style="margin:.25rem 0 .5rem;font-weight:700">ปริมาณ <span style="color:#ef4444">(จำเป็น)</span></div>${portionRad}
+             ${proteinRad}
+           </div>`,
+        width: 520,
+        showCancelButton: true,
+        confirmButtonText: 'บันทึก',
+        cancelButtonText: 'ยกเลิก',
+        preConfirm: ()=>{
+          const pop = Swal.getPopup();
+          const addons = Array.from(pop.querySelectorAll('.addon:checked')).map(el=>el.value);
+          const spiceEl   = pop.querySelector("input[name='spice']:checked");
+          const portionEl = pop.querySelector("input[name='portion']:checked");
+          if(!spiceEl){ Swal.showValidationMessage('โปรดเลือกระดับความเผ็ด'); return false; }
+          if(!portionEl){ Swal.showValidationMessage('โปรดเลือกปริมาณ'); return false; }
+          const proteinEl = pop.querySelector("input[name='protein']:checked");
+          return { addons, spice:spiceEl.value, portion:portionEl.value, portionAdd: portionEl.dataset.add || '0', protein: proteinEl ? proteinEl.value : '' };
+        }
+      }).then(res=>{
+        if(res.isConfirmed){
+          const {addons, spice, portion, portionAdd, protein} = res.value;
+          li.dataset.addons = addons.join(',');
+          li.dataset.spice = spice;
+          li.dataset.portion = portion;
+          li.dataset.portionAdd = portionAdd;
+          if(protein) li.dataset.protein = protein; else delete li.dataset.protein;
+          updateBadge(li);
+          recalcTotals();
+        }
+      });
+    }
+
+    function updateBadge(li){
+      const qtyVal = parseInt(li.querySelector('.qty')?.value||'0');
+      const spice  = li.dataset.spice||'';
+      const portion= li.dataset.portion||'';
+      const btn = li.querySelector('.optbtn');
+      if(qtyVal>0 && (!spice || !portion)){
+        btn.innerHTML = 'ตัวเลือก… <span class="ml-1 text-red-500 text-xs">(ต้องเลือก)</span>';
+      }else{
+        btn.textContent = 'ตัวเลือก…';
       }
-    });
+    }
+
+    function recalcTotals(){
+      const items = Array.from(document.querySelectorAll('.lineitem'));
+      let count = 0, total = 0;
+      items.forEach(li=>{
+        const qty = parseInt(li.querySelector('.qty')?.value||'0');
+        if(!qty) return;
+        const base = parseInt(li.dataset.price||'0');
+        const addonCount = (li.dataset.addons||'').split(',').filter(Boolean).length;
+        const portionAdd = parseInt(li.dataset.portionAdd||'0')||0;
+        const unit = base + addonCount*ADDON_PRICE + portionAdd;
+        total += unit * qty;
+        count += qty;
+      });
+      const mini = document.getElementById('mini-cart');
+      document.getElementById('mini-count').textContent = count;
+      document.getElementById('mini-total').textContent = total;
+      mini.classList.toggle('hidden', count===0);
+    }
+
+    // ===== Helper: เปิด LINE พร้อมเติมข้อความ =====
+    function openLineWith(text){
+      const encoded = encodeURIComponent(text);
+      // พยายามเปิดแอป LINE ก่อน (mobile)
+      const appUrl  = `line://msg/text/?${encoded}`;
+      // สำรองเปิดผ่านเว็บ/Share
+      const shareUrl = `https://line.me/R/share?text=${encoded}`;
+      // ใช้ location ไปที่แอป ถ้าเปิดไม่ได้ ผู้ใช้กดย้อนกลับจะไม่สะดุด แล้วเรายิงสำรอง
+      let triedFallback = false;
+      const timer = setTimeout(()=>{
+        if(!triedFallback){
+          triedFallback = true;
+          window.open(shareUrl, '_blank'); // เปิดแท็บ share สำรอง
+        }
+      }, 700);
+      // พยายามเปิดแอป (บางเบราว์เซอร์จะไม่ block)
+      window.location.href = appUrl;
+      // กันกรณีเปิดได้แล้ว ให้เคลียร์ fallback
+      window.addEventListener('pagehide', ()=> clearTimeout(timer), {once:true});
+    }
+
+    // Escape ข้อความให้ใส่ใน HTML ได้ปลอดภัย
+    function escapeHtml(str){
+      return str.replace(/[&<>"]/g, s=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[s]));
+    }
+
+    // ===== ยืนยัน/แสดง popup และส่งไป LINE =====
+    function buildAndCopyOrder(){
+      const items = Array.from(document.querySelectorAll('.lineitem'));
+      let lines = [], idx=1, grand=0, missing=[];
+
+      items.forEach(li=>{
+        const qty = parseInt(li.querySelector('.qty')?.value||'0');
+        if(!qty) return;
+        const name = li.dataset.item;
+        const base = parseInt(li.dataset.price||'0');
+        const spice = li.dataset.spice||'';
+        const portion = li.dataset.portion||'';
+        if(!spice || !portion){ missing.push(name); return; }
+        const addons = (li.dataset.addons||'').split(',').filter(Boolean);
+        const portionAdd = parseInt(li.dataset.portionAdd||'0')||0;
+        const protein = li.dataset.protein||'';
+        const unit = base + addons.length*ADDON_PRICE + portionAdd;
+        const total = unit * qty; grand += total;
+        const addonTxt = addons.length ? ` + ${addons.join(' + ')}` : '';
+        const optParts = [spice, portion, protein].filter(Boolean).join(', ');
+        const optTxt = optParts ? ` (${optParts})` : '';
+        lines.push(`${idx}) ${name}${addonTxt}${optTxt} ×${qty} — ${unit}฿/ที่`);
+        idx++;
+      });
+
+      if(missing.length){
+        Swal.fire({icon:'warning', title:'กรอกตัวเลือกไม่ครบ', html:`โปรดเลือก <b>ความเผ็ด</b> และ <b>ปริมาณ</b> ของรายการ:<br>• ${missing.join('<br>• ')}`});
+        const first = items.find(li=> missing.includes(li.dataset.item));
+        if(first){ first.scrollIntoView({behavior:'smooth', block:'center'}); openOptions(first); }
+        return;
+      }
+      if(!lines.length){
+        Swal.fire({icon:'info', title:'ยังไม่ได้เลือกเมนู', text:'เพิ่มจำนวนอย่างน้อย 1 รายการก่อนนะคะ'}); return;
+      }
+
+      lines.push(`รวมทั้งสิ้น: ${grand}฿`);
+      const text = lines.join('\n');
+
+      // แสดง popup สรุป และให้เลือกเปิด LINE หรือคัดลอก
+      Swal.fire({
+        title: 'ตรวจสอบคำสั่งซื้อ',
+        html: `<pre style="text-align:left;white-space:pre-wrap;max-height:50vh;overflow:auto;padding:.75rem;border:1px solid #e5e7eb;border-radius:.75rem;background:#f9fafb;">${escapeHtml(text)}</pre>`,
+        width: 600,
+        showCancelButton: true,
+        showDenyButton: true,
+        confirmButtonText: 'เปิด LINE และส่ง',
+        denyButtonText: 'คัดลอกอย่างเดียว',
+        cancelButtonText: 'แก้ไขต่อ',
+        reverseButtons: true,
+        focusConfirm: true
+      }).then(async (res)=>{
+        if(res.isConfirmed){
+          // เปิด LINE พร้อมเติมข้อความ
+          openLineWith(text);
+        }else if(res.isDenied){
+          try{
+            await navigator.clipboard.writeText(text);
+            Swal.fire({toast:true,position:'bottom',timer:2000,showConfirmButton:false,icon:'success',title:'คัดลอกแล้ว'});
+          }catch{
+            Swal.fire({icon:'error',title:'คัดลอกไม่สำเร็จ',text:'ลองอีกครั้งหรือตรวจสอบสิทธิ์การคัดลอก'});
+          }
+        }
+      });
+    }
+
+    // เริ่มทำงาน
+    render();
+    window.buildAndCopyOrder = buildAndCopyOrder;
   </script>
 </body>
 </html>
