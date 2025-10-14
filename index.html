@@ -341,15 +341,22 @@
     }
 
     /* ====== LINE helper → ส่งตรงหา OA @218sgmwj ====== */
-    function openLineWith(text){
-      var encoded = encodeURIComponent(text);
-      var appUrl  = 'line://oaMessage/@218sgmwj/?message=' + encoded;
-      var webUrl  = 'https://line.me/R/oaMessage/@218sgmwj/?message=' + encoded;
-      var triedFallback = false;
-      var timer = setTimeout(function(){ if(!triedFallback){ triedFallback = true; window.open(webUrl, '_blank'); } }, 700);
-      window.location.href = appUrl;
-      window.addEventListener('pagehide', function(){ clearTimeout(timer); }, {once:true});
-    }
+      function openLineWith(text){
+        // แปลงบรรทัดใหม่เป็น CRLF เพื่อให้ LINE แสดงบรรทัดถูก
+        var encoded = encodeURIComponent(text).replace(/%0A/g, '%0D%0A');
+        
+        // ส่งหา LINE OA @framezaza โดยตรง
+        var appUrl = 'line://oaMessage/@framezaza/?message=' + encoded;
+        var webUrl = 'https://line.me/R/oaMessage/@framezaza/?message=' + encoded;
+        
+        var triedFallback = false;
+        var timer = setTimeout(function(){
+          if(!triedFallback){ triedFallback = true; window.open(webUrl, '_blank'); }
+        }, 700);
+
+        window.location.href = appUrl;
+        window.addEventListener('pagehide', function(){ clearTimeout(timer); }, {once:true});
+      }
 
     function escapeHtml(str){
       return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
