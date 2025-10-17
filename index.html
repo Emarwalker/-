@@ -362,8 +362,8 @@
     function openLineWith(text){
       // แปลง \n เป็น CRLF เพื่อให้ LINE ขึ้นบรรทัดถูก
       var encoded = encodeURIComponent(text).replace(/%0A/g, '%0D%0A');
-      var appUrl  = 'line://oaMessage/@218sgmwj/?message=' + encoded;
-      var webUrl  = 'https://line.me/R/oaMessage/@218sgmwj/?message=' + encoded;
+      var appUrl  = 'line://oaMessage/@218sgmwj/?' + encoded;
+      var webUrl  = 'https://line.me/R/oaMessage/@218sgmwj/?' + encoded;
 
       var triedFallback = false;
       var timer = setTimeout(function(){
@@ -493,3 +493,4 @@
   </script>
 </body>
 </html>
+
