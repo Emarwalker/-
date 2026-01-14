@@ -2,9 +2,8 @@
 <html lang="th">
 <head>
   <meta charset="utf-8" />
-  <!-- ล็อกขนาดหน้าให้เหมือน Desktop -->
-  <meta name="viewport" content="width=1024, initial-scale=1, viewport-fit=cover" />
-  <title>เมนูข้าวกะเพรายายหนุ่ย — Mobile ES5</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>เมนูข้าวกะเพรายายหนุ่ย — Mobile First</title>
   <meta name="theme-color" content="#10b981" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -16,42 +15,41 @@
     html, body { width:100%; height:100%; overflow-x:hidden; background:#f9fafb; }
     body{ font-family:'Noto Sans Thai',system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial; color:var(--ink); }
     .section{ border:1px solid var(--line); border-radius:1.25rem; background:#fff; box-shadow:0 6px 18px rgba(2,8,23,.04); }
-
-    /* แถวเมนู */
     .lineitem{
       display:flex; align-items:center; justify-content:space-between; gap:.5rem;
-      border-bottom:1px solid #f5f5f5; padding:.65rem .25rem;
+      border-bottom:1px solid #f5f5f5; padding:.7rem .25rem;
     }
     .lineitem:last-child{ border-bottom:0; }
-
-    /* ชื่อเมนู: อ่านง่าย 2 บรรทัด */
     .name{
-      font-weight:700; white-space:normal; line-height:1.25;
+      font-weight:800; white-space:normal; line-height:1.2;
       display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;
       overflow:hidden; text-overflow:ellipsis;
     }
-
-    .price{ font-variant-numeric:tabular-nums; font-weight:800; color:#065f46; width:64px; text-align:right; }
+    .price{ font-variant-numeric:tabular-nums; font-weight:900; color:#065f46; width:70px; text-align:right; }
     .pill-hot{ background:#fee2e2; color:#b91c1c; font-size:11px; padding:2px 8px; border-radius:9999px; margin-left:.4rem; }
-    .orderbtn{ background:#10b981; color:white; border-radius:12px; padding:.45rem .9rem; font-weight:700; border:none; cursor:pointer; }
+    .orderbtn{ background:#10b981; color:white; border-radius:12px; padding:.45rem .75rem; font-weight:800; border:none; cursor:pointer; }
     .orderbtn:active{ transform:scale(.96); }
-    .btn-badge{ background:#064e3b; color:#fff; font-size:11px; padding:2px 6px; border-radius:9999px; margin-left:.35rem; display:none; }
-
-    #mini-cart .bubble{ background:#059669; color:#fff; border-radius:9999px; box-shadow:0 10px 22px rgba(5,150,105,.35); }
+    .mini-pill{ background:#064e3b; color:#fff; font-size:11px; padding:2px 8px; border-radius:9999px; margin-left:.35rem; }
     .safe-bottom{ padding-bottom:max(env(safe-area-inset-bottom), 0px); }
     .hidden{ display:none; }
-
-    /* จัดกึ่งกลางและขยายเล็กน้อยให้เหมือนมุมมอง Desktop */
-    main{ max-width:1024px; margin:0 auto; transform-origin:top center; }
+    .quickbtn{
+      border:1px solid #e5e7eb; border-radius:12px; padding:.4rem .65rem;
+      font-weight:800; background:#fff;
+    }
+    .quickbtn:active{ transform:scale(.96); }
+    .searchbox{
+      border:1px solid #e5e7eb; border-radius:14px; padding:.65rem .85rem; width:100%;
+      outline:none;
+    }
   </style>
 </head>
 <body class="bg-neutral-50 text-neutral-900">
-  <header class="py-7 text-center bg-white border-b border-neutral-200">
-    <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight">เมนูข้าวกะเพรายายหนุ่ย</h1>
-    <p class="text-xs md:text-sm text-neutral-600 mt-1">แตะปุ่ม <b>สั่ง</b> เพื่อเลือกตัวเลือก + จำนวน แล้วเพิ่มลงรายการ</p>
+  <header class="py-6 text-center bg-white border-b border-neutral-200">
+    <h1 class="text-2xl font-extrabold tracking-tight">เมนูข้าวกะเพรายายหนุ่ย</h1>
+    <p class="text-xs text-neutral-600 mt-1">ค้นหาเมนู / กด “สั่ง” เพื่อเลือกเผ็ด+ปริมาณ แล้วส่งเข้า LINE</p>
   </header>
 
-  <main class="max-w-3xl mx-auto px-4 py-6 space-y-6">
+  <main class="max-w-3xl mx-auto px-4 py-5 space-y-5">
     <!-- QR -->
     <section class="section p-5 text-center">
       <h2 class="text-xl font-extrabold mb-2">สั่งผ่าน LINE</h2>
@@ -62,33 +60,35 @@
       </p>
     </section>
 
-    <!-- เมนู -->
-    <div id="menu-container" class="space-y-6"></div>
-
-    <!-- ปุ่มล่าง -->
+    <!-- SEARCH -->
     <section class="section p-4">
-      <div id="fixed-buttons" class="fixed bottom-0 left-0 right-0 bg-white border-t border-neutral-200 shadow-lg z-50 px-4 py-3 safe-bottom">
-        <div class="max-w-3xl mx-auto flex items-center gap-3">
-          <button class="flex-1 py-3 font-bold rounded-xl bg-emerald-600 text-white shadow hover:brightness-105"
-                  onclick="buildAndCopyOrder()">ยืนยันและคัดลอกคำสั่งซื้อ</button>
-        </div>
+      <div class="flex items-center gap-3">
+        <input id="search" class="searchbox" placeholder="ค้นหาเมนู เช่น หมูกรอบ / กุ้ง / ไข่ / กระเทียม" />
+        <button class="quickbtn" type="button" onclick="clearSearch()">ล้าง</button>
       </div>
+      <p class="text-xs text-neutral-500 mt-2">ทิป: กด “+” เพิ่มแบบเร็วได้ แต่ถ้าต้องเลือกเผ็ด/พิเศษ กด “สั่ง”</p>
     </section>
 
-    <!-- mini cart -->
-    <div id="mini-cart" class="fixed right-4 bottom-24 sm:bottom-8 z-30 hidden">
-      <div class="bubble px-4 py-2 text-sm font-bold">
-        <span id="mini-count">0</span> รายการ • <span id="mini-total">0฿</span>
-      </div>
-    </div>
+    <!-- MENU -->
+    <div id="menu-container" class="space-y-5"></div>
 
-    <footer class="text-center text-neutral-500 text-sm pb-4">© <span id="year"></span> กระเพรายายหนุ่ย</footer>
+    <footer class="text-center text-neutral-500 text-sm pb-20">© <span id="year"></span> กระเพรายายหนุ่ย</footer>
   </main>
+
+  <!-- FIXED CART BAR -->
+  <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-neutral-200 shadow-lg z-50 px-4 py-3 safe-bottom">
+    <div class="max-w-3xl mx-auto flex items-center gap-3">
+      <button class="flex-1 py-3 font-extrabold rounded-xl bg-emerald-600 text-white shadow hover:brightness-105"
+              onclick="openCart()">ตะกร้า <span id="cart-count-pill" class="mini-pill">0</span> • <span id="cart-total-pill">0฿</span></button>
+      <button class="py-3 px-4 font-extrabold rounded-xl border border-neutral-200 bg-white"
+              onclick="confirmAndSend()">ส่ง LINE</button>
+    </div>
+  </div>
 
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
 
-    /* ====== Helpers (ES5-safe) ====== */
+    /* ===== ES5 helpers ===== */
     function closest(el, selector){
       while(el && el.nodeType===1){
         if(el.matches ? el.matches(selector) : (el.msMatchesSelector && el.msMatchesSelector(selector))){ return el; }
@@ -97,15 +97,13 @@
       return null;
     }
     function eachNodeList(nl, fn){ for(var i=0;i<nl.length;i++){ fn(nl[i], i); } }
-    function addClass(el, c){ if(el.classList){ el.classList.add(c); } else if((' '+el.className+' ').indexOf(' '+c+' ')===-1){ el.className += (el.className?' ':'')+c; } }
-    function removeClass(el, c){ if(el.classList){ el.classList.remove(c); } else { el.className = el.className.replace(new RegExp('(^|\\s)'+c+'(?!\\S)','g'),'').trim(); } }
 
-    /* ====== CONFIG ====== */
+    /* ===== CONFIG ===== */
     var ADDONS   = ['ไข่ดาว','ไข่เจียว','กุนเชียง','หมูยอ','ไข่เยี่ยวม้า'];
     var ADDON_PRICE = 10;
     var SPICES   = ['เผ็ด','เผ็ดกลาง','เผ็ดน้อย','ไม่เผ็ด'];
     var PORTIONS = [{label:'ปกติ', add:0}, {label:'พิเศษ', add:10}];
-    var ENABLE_EGGS = true; // false เพื่อซ่อนไข่ทั้งหมด
+    var ENABLE_EGGS = true;
 
     var CATEGORIES = [
       { title:'หมวดกะเพรา', desc:'เผ็ดหอมใบกะเพรา ผัดร้อน ๆ ถึงใจ', items:[
@@ -140,7 +138,7 @@
       ]}
     ];
 
-    /* ====== Utils ====== */
+    /* ===== format ===== */
     var hasIntl = typeof Intl!=='undefined' && Intl && typeof Intl.NumberFormat==='function';
     var THB = hasIntl ? new Intl.NumberFormat('th-TH') : null;
     function numberFormat(n){
@@ -152,13 +150,106 @@
     }
     function thb(n){ return numberFormat(n)+'฿'; }
 
-    /* ====== RENDER ====== */
+    function escapeHtml(str){
+      return String(str)
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    }
+
+    /* ===== CART (แก้แล้ว: แยกตาม options) ===== */
+    var STORAGE_KEY = 'yai-nui-cart-v2';
+    var cart = []; // [{id, name, base, spice, portion, portionAdd, protein, addons[], note, qty}]
+
+    function makeId(o){
+      // สร้างคีย์จากตัวเลือกทั้งหมด เพื่อแยกรายการ
+      var a = (o.addons && o.addons.length) ? o.addons.slice().sort().join('+') : '';
+      return [o.name, o.spice, o.portion, o.protein||'', a, o.note||''].join('||');
+    }
+    function cartAdd(itemName, basePrice, opts){
+      var o = {
+        name: itemName,
+        base: basePrice,
+        spice: opts.spice || '',
+        portion: opts.portion || '',
+        portionAdd: parseInt(opts.portionAdd||'0',10)||0,
+        protein: opts.protein || '',
+        addons: opts.addons || [],
+        note: opts.note || '',
+        qty: parseInt(opts.qty||1,10)||1
+      };
+      o.id = makeId(o);
+
+      // รวมกับรายการเดิมที่ id ตรงกัน
+      for(var i=0;i<cart.length;i++){
+        if(cart[i].id === o.id){
+          cart[i].qty += o.qty;
+          saveCart(); updateCartPills(); updateMenuBadges();
+          return;
+        }
+      }
+      cart.push(o);
+      saveCart(); updateCartPills(); updateMenuBadges();
+    }
+    function cartRemoveByIndex(i){
+      if(i<0 || i>=cart.length) return;
+      cart.splice(i,1);
+      saveCart(); updateCartPills(); updateMenuBadges();
+    }
+    function cartSetQty(i, qty){
+      if(i<0 || i>=cart.length) return;
+      qty = parseInt(qty,10);
+      if(isNaN(qty) || qty<1) qty = 1;
+      cart[i].qty = qty;
+      saveCart(); updateCartPills(); updateMenuBadges();
+    }
+    function unitPrice(it){
+      var addonCount = it.addons ? it.addons.length : 0;
+      return (parseInt(it.base,10)||0) + addonCount*ADDON_PRICE + (parseInt(it.portionAdd,10)||0);
+    }
+    function cartTotals(){
+      var count=0, total=0;
+      for(var i=0;i<cart.length;i++){
+        var it=cart[i];
+        count += it.qty;
+        total += unitPrice(it)*it.qty;
+      }
+      return {count:count, total:total};
+    }
+    function saveCart(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(cart)); }catch(e){} }
+    function loadCart(){
+      try{
+        var raw = localStorage.getItem(STORAGE_KEY);
+        if(raw){ cart = JSON.parse(raw) || []; }
+      }catch(e){ cart = []; }
+      updateCartPills();
+    }
+
+    function updateCartPills(){
+      var t = cartTotals();
+      document.getElementById('cart-count-pill').textContent = t.count;
+      document.getElementById('cart-total-pill').textContent = thb(t.total);
+    }
+
+    /* ===== RENDER MENU + SEARCH ===== */
     var container = document.getElementById('menu-container');
 
-    function render(){
+    function renderMenu(){
       container.innerHTML = '';
+      var q = (document.getElementById('search').value || '').toLowerCase().replace(/^\s+|\s+$/g,'');
+
       for(var ci=0; ci<CATEGORIES.length; ci++){
         var cat = CATEGORIES[ci];
+
+        // filter items by search
+        var filtered = [];
+        for(var mi=0; mi<cat.items.length; mi++){
+          var m = cat.items[mi];
+          if(!q || m.name.toLowerCase().indexOf(q) > -1){
+            filtered.push(m);
+          }
+        }
+        if(q && filtered.length===0) continue;
+
         var sec = document.createElement('section');
         sec.className = 'section p-5';
         sec.innerHTML = ''
@@ -167,60 +258,87 @@
           +   '<p class="text-xs text-neutral-500">' + (cat.desc||'') + '</p>'
           + '</div>'
           + '<ul class="divide-y divide-neutral-100"></ul>';
+
         var ul = sec.querySelector('ul');
 
-        for(var mi=0; mi<cat.items.length; mi++){
-          var m = cat.items[mi];
+        for(var i=0;i<filtered.length;i++){
+          var m2 = filtered[i];
           var li = document.createElement('li');
           li.className = 'lineitem';
-          li.dataset.item  = m.name;
-          li.dataset.price = m.price;
-          li.dataset.qty   = '0';
-          if(m.proteins){ li.dataset.proteins = m.proteins.join(','); }
+          li.dataset.item  = m2.name;
+          li.dataset.price = m2.price;
+          if(m2.proteins){ li.dataset.proteins = m2.proteins.join(','); }
 
+          // ปุ่ม + เร็ว (เพิ่ม 1 แบบ “ยังไม่เลือกตัวเลือก”) -> จะถามให้เลือกทันทีเพื่อกันผิด
           li.innerHTML = ''
             + '<div class="flex items-center flex-1 gap-2 min-w-0">'
-            +   '<span class="name">' + m.name + '</span>'
-            +   (m.hot ? '<span class="pill-hot">Hot</span>' : '')
+            +   '<span class="name">' + m2.name + '</span>'
+            +   (m2.hot ? '<span class="pill-hot">Hot</span>' : '')
             + '</div>'
             + '<div class="flex items-center gap-2">'
-            +   '<button type="button" class="orderbtn">สั่ง<span class="btn-badge">0</span></button>'
-            +   '<div class="price">' + thb(m.price) + '</div>'
+            +   '<button type="button" class="quickbtn" data-act="quick">+</button>'
+            +   '<button type="button" class="orderbtn" data-act="order">สั่ง <span class="mini-pill" data-badge="1">0</span></button>'
+            +   '<div class="price">' + thb(m2.price) + '</div>'
             + '</div>';
           ul.appendChild(li);
         }
         container.appendChild(sec);
       }
 
-      var btns = document.querySelectorAll('.orderbtn');
-      eachNodeList(btns, function(btn){
-        btn.addEventListener('click', function(){ var li = closest(btn, '.lineitem'); if(li){ openOrder(li); } });
-      });
-
-      loadCart(); // รีหน้าแล้วล้างตะกร้า
+      bindMenuButtons();
+      updateMenuBadges();
     }
 
-    /* ====== POPUP ====== */
-    function openOrder(li){
-      var selAddons = (li.dataset.addons||'').split(',');
-      for(var i=selAddons.length-1;i>=0;i--){ if(!selAddons[i]) selAddons.splice(i,1); else selAddons[i]=selAddons[i].replace(/^\s+|\s+$/g,''); }
-      var selSpice  = li.dataset.spice || '';
-      var selPortion= li.dataset.portion || '';
+    function bindMenuButtons(){
+      var btns = container.querySelectorAll('button');
+      eachNodeList(btns, function(btn){
+        btn.addEventListener('click', function(){
+          var li = closest(btn, '.lineitem'); if(!li) return;
+          var act = btn.getAttribute('data-act');
+          if(act==='order'){ openOrderPopup(li); }
+          if(act==='quick'){ openOrderPopup(li); } // quick ก็เปิด popup เพื่อกันเลือกไม่ครบ
+        });
+      });
+    }
+
+    function clearSearch(){
+      document.getElementById('search').value = '';
+      renderMenu();
+    }
+
+    // badge: แสดงจำนวนรวมของเมนูนั้น ๆ (รวมทุกตัวเลือก)
+    function updateMenuBadges(){
+      var lis = container.querySelectorAll('.lineitem');
+      eachNodeList(lis, function(li){
+        var name = li.dataset.item;
+        var sum = 0;
+        for(var i=0;i<cart.length;i++){
+          if(cart[i].name===name) sum += cart[i].qty;
+        }
+        var badge = li.querySelector('[data-badge="1"]');
+        if(badge) badge.textContent = sum;
+      });
+    }
+
+    /* ===== POPUP ORDER ===== */
+    function openOrderPopup(li){
+      var itemName = li.dataset.item;
+      var basePrice = parseInt(li.dataset.price||'0',10)||0;
+
       var proteins  = (li.dataset.proteins||'').split(',');
       for(var j=proteins.length-1;j>=0;j--){ if(!proteins[j]) proteins.splice(j,1); }
-      var selProtein= li.dataset.protein || (proteins[0]||'');
-      var noteText  = li.dataset.note || '';
 
       var eggNames = ['ไข่ดาว','ไข่เจียว','ไข่เยี่ยวม้า'];
       var baseAddons = [];
-      for(var a=0;a<ADDONS.length;a++){ if(ENABLE_EGGS || eggNames.indexOf(ADDONS[a])===-1){ baseAddons.push(ADDONS[a]); } }
+      for(var a=0;a<ADDONS.length;a++){
+        if(ENABLE_EGGS || eggNames.indexOf(ADDONS[a])===-1){ baseAddons.push(ADDONS[a]); }
+      }
 
       var addChk = '';
       for(var k=0;k<baseAddons.length;k++){
         var aName = baseAddons[k];
-        var checked = selAddons.indexOf(aName)>-1 ? 'checked' : '';
         addChk += '<label style="display:flex;align-items:center;gap:.5rem;margin:.25rem 0;">'
-                + "<input type='checkbox' class='addon' value='" + aName + "' " + checked + '> ' + aName
+                + "<input type='checkbox' class='addon' value='" + aName + "'> " + aName
                 + " <span class='text-neutral-500'>+" + ADDON_PRICE + "฿</span>"
                 + '</label>';
       }
@@ -228,74 +346,71 @@
       var spiceRad = '';
       for(var s=0;s<SPICES.length;s++){
         var sp = SPICES[s];
-        var sChecked = (sp===selSpice)?'checked':'';
         spiceRad += '<label style="display:flex;align-items:center;gap:.5rem;margin:.25rem 0;">'
-                  + "<input type='radio' name='spice' value='" + sp + "' " + sChecked + '> ' + sp
+                  + "<input type='radio' name='spice' value='" + sp + "'> " + sp
                   + '</label>';
       }
 
       var portionRad = '';
       for(var p=0;p<PORTIONS.length;p++){
         var po = PORTIONS[p];
-        var pChecked = (po.label===selPortion)?'checked':'';
         var extra = po.add>0 ? ' +' + po.add + '฿' : '';
         portionRad += '<label style="display:flex;align-items:center;gap:.5rem;margin:.25rem 0;">'
-                    + "<input type='radio' name='portion' value='" + po.label + "' data-add='" + po.add + "' " + pChecked + '> ' + po.label + extra
+                    + "<input type='radio' name='portion' value='" + po.label + "' data-add='" + po.add + "'> " + po.label + extra
                     + '</label>';
       }
 
       var proteinRad = '';
       if(proteins.length){
         proteinRad += '<hr style="margin:.75rem 0">'
-                    + '<div style="margin:.25rem 0 .5rem;font-weight:700">โปรตีน (0฿)</div>';
+                    + '<div style="margin:.25rem 0 .5rem;font-weight:800">โปรตีน (0฿)</div>';
         for(var pr=0;pr<proteins.length;pr++){
           var prn = proteins[pr];
-          var prChecked = (prn===selProtein)?'checked':'';
           proteinRad += '<label style="display:flex;align-items:center;gap:.5rem;margin:.25rem 0;">'
-                      + "<input type='radio' name='protein' value='" + prn + "' " + prChecked + '> ' + prn
+                      + "<input type='radio' name='protein' value='" + prn + "' " + (pr===0?'checked':'') + "> " + prn
                       + '</label>';
         }
       }
 
       Swal.fire({
-        title: 'สั่ง — ' + li.dataset.item,
+        title: 'สั่ง — ' + itemName,
         html: ''
           + '<div style="text-align:left">'
-          +   '<div style="margin:.25rem 0 .5rem;font-weight:700">จำนวน</div>'
+          +   '<div style="margin:.25rem 0 .5rem;font-weight:800">จำนวน</div>'
           +   '<div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem;">'
           +     "<button type='button' id='qdec' style='padding:.35rem .6rem;border:1px solid #e5e7eb;border-radius:10px;'>−</button>"
           +     "<input type='text' id='qty' value='1' inputmode='numeric' pattern='[0-9]*' style='width:72px;text-align:center;padding:.45rem;border:1px solid #e5e7eb;border-radius:10px;'>"
           +     "<button type='button' id='qinc' style='padding:.35rem .6rem;border:1px solid #e5e7eb;border-radius:10px;'>+</button>"
           +   '</div>'
           +   '<hr style="margin:.75rem 0">'
-          +   '<div style="margin:.25rem 0 .5rem;font-weight:700">ระดับความเผ็ด <span style="color:#ef4444">(จำเป็น)</span></div>' + spiceRad
+          +   '<div style="margin:.25rem 0 .5rem;font-weight:800">ระดับความเผ็ด <span style="color:#ef4444">(จำเป็น)</span></div>' + spiceRad
           +   '<hr style="margin:.75rem 0">'
-          +   '<div style="margin:.25rem 0 .5rem;font-weight:700">ปริมาณ <span style="color:#ef4444">(จำเป็น)</span></div>' + portionRad
+          +   '<div style="margin:.25rem 0 .5rem;font-weight:800">ปริมาณ <span style="color:#ef4444">(จำเป็น)</span></div>' + portionRad
           +   proteinRad
           +   '<hr style="margin:.75rem 0">'
-          +   '<div style="margin:.25rem 0 .5rem;font-weight:700">เครื่องเคียง (+' + ADDON_PRICE + '฿/อย่าง)</div>' + addChk
+          +   '<div style="margin:.25rem 0 .5rem;font-weight:800">เครื่องเคียง (+' + ADDON_PRICE + '฿/อย่าง)</div>' + addChk
           +   '<hr style="margin:.75rem 0">'
-          +   '<div style="margin:.25rem 0 .5rem;font-weight:700">หมายเหตุ</div>'
-          +   "<textarea name='note' rows='2' style='width:100%;padding:.5rem;border:1px solid #e5e7eb;border-radius:.5rem;' placeholder='เช่น ไม่ใส่ผงชูรส/เพิ่มใบกะเพรา'>" + noteText + "</textarea>"
-          +   "<div id='subtotal' style='margin-top:.75rem;font-weight:800;color:#065f46;'></div>"
+          +   '<div style="margin:.25rem 0 .5rem;font-weight:800">หมายเหตุ</div>'
+          +   "<textarea name='note' rows='2' style='width:100%;padding:.5rem;border:1px solid #e5e7eb;border-radius:.5rem;' placeholder='เช่น ไม่ใส่ผงชูรส/เพิ่มใบกะเพรา'></textarea>"
+          +   "<div id='subtotal' style='margin-top:.75rem;font-weight:900;color:#065f46;'></div>"
           + '</div>',
         width: 520,
         showCancelButton: true,
-        confirmButtonText: 'เพิ่มในรายการ',
+        confirmButtonText: 'เพิ่มในตะกร้า',
         cancelButtonText: 'ยกเลิก',
         didOpen: function(){
           var pop = Swal.getPopup();
           var qtyEl = pop.querySelector('#qty');
           var qdec = pop.querySelector('#qdec');
           var qinc = pop.querySelector('#qinc');
+
           function toInt(v){ var n=parseInt(v,10); return isNaN(n)||n<1?1:n; }
           function priceCalc(){
-            var base = parseInt(li.dataset.price||'0',10);
             var addonCount = pop.querySelectorAll('.addon:checked').length;
             var portionChecked = pop.querySelector("input[name='portion']:checked");
             var portionAdd = parseInt(portionChecked ? (portionChecked.getAttribute('data-add')||'0') : '0',10) || 0;
             var q = toInt(qtyEl.value);
-            var unit = base + addonCount*ADDON_PRICE + portionAdd;
+            var unit = basePrice + addonCount*ADDON_PRICE + portionAdd;
             pop.querySelector('#subtotal').innerHTML = 'รวมย่อย: ' + thb(unit*q) + ' (ต่อที่ ' + thb(unit) + ')';
           }
           qdec.addEventListener('click', function(){ qtyEl.value = String(Math.max(1, toInt(qtyEl.value)-1)); priceCalc(); });
@@ -310,187 +425,217 @@
           var portionEl = pop.querySelector("input[name='portion']:checked");
           if(!spiceEl){ Swal.showValidationMessage('โปรดเลือกระดับความเผ็ด'); return false; }
           if(!portionEl){ Swal.showValidationMessage('โปรดเลือกปริมาณ'); return false; }
+
           var qty = parseInt(pop.querySelector('#qty').value||'1',10) || 1;
           var addonEls = pop.querySelectorAll('.addon:checked');
           var addons = []; for(var ii=0; ii<addonEls.length; ii++){ addons.push(addonEls[ii].value); }
           var proteinEl = pop.querySelector("input[name='protein']:checked");
           var noteEl = pop.querySelector("textarea[name='note']");
-          return { qty:qty, addons:addons, spice:spiceEl.value, portion:portionEl.value, portionAdd: (portionEl.getAttribute('data-add') || '0'), protein: proteinEl ? proteinEl.value : '', note: (noteEl.value||'').replace(/^\s+|\s+$/g,'') };
+          return {
+            qty: qty,
+            addons: addons,
+            spice: spiceEl.value,
+            portion: portionEl.value,
+            portionAdd: (portionEl.getAttribute('data-add') || '0'),
+            protein: proteinEl ? proteinEl.value : '',
+            note: (noteEl.value||'').replace(/^\s+|\s+$/g,'')
+          };
         }
       }).then(function(res){
         if(res.isConfirmed){
-          var v = res.value;
-          li.dataset.spice = v.spice; li.dataset.portion = v.portion; li.dataset.portionAdd = v.portionAdd;
-          li.dataset.addons = v.addons.join(','); li.dataset.note = v.note||'';
-          if(v.protein) li.dataset.protein = v.protein; else delete li.dataset.protein;
-          li.dataset.qty = String((parseInt(li.dataset.qty||'0',10)||0) + v.qty);
-          updateBadge(li); recalcTotals(); saveCart();
-          Swal.fire({toast:true,position:'bottom',timer:1600,showConfirmButton:false,icon:'success',title:'เพิ่มแล้ว: '+li.dataset.item+' ×'+v.qty});
+          cartAdd(itemName, basePrice, res.value);
+          Swal.fire({toast:true,position:'bottom',timer:1400,showConfirmButton:false,icon:'success',title:'เพิ่มแล้ว: '+itemName+' ×'+res.value.qty});
         }
       });
     }
 
-    /* ====== UI helpers ====== */
-    function updateBadge(li){
-      var btn = li.querySelector('.orderbtn');
-      var badge = btn.querySelector('.btn-badge');
-      var q = parseInt(li.dataset.qty||'0',10)||0;
-      if(q>0){ badge.textContent = q; badge.style.display='inline-block'; }
-      else { badge.style.display='none'; }
-    }
-
-    function recalcTotals(){
-      var items = document.querySelectorAll('.lineitem');
-      var count = 0, total = 0;
-      for(var i=0;i<items.length;i++){
-        var li = items[i];
-        var qty = parseInt(li.dataset.qty||'0',10)||0; if(!qty) continue;
-        var base = parseInt(li.dataset.price||'0',10);
-        var addons = (li.dataset.addons||'').split(',');
-        var addonCount = 0; for(var a=0;a<addons.length;a++){ if(addons[a]) addonCount++; }
-        var portionAdd = parseInt(li.dataset.portionAdd||'0',10)||0;
-        var unit = base + addonCount*ADDON_PRICE + portionAdd;
-        total += unit * qty; count += qty;
+    /* ===== CART VIEW / EDIT ===== */
+    function openCart(){
+      if(!cart.length){
+        Swal.fire({icon:'info', title:'ตะกร้าว่าง', text:'กด “สั่ง” เพื่อเพิ่มรายการก่อนนะคะ'});
+        return;
       }
-      document.getElementById('mini-count').textContent = count;
-      document.getElementById('mini-total').textContent = thb(total);
-      var mini = document.getElementById('mini-cart');
-      if(count===0){ addClass(mini,'hidden'); } else { removeClass(mini,'hidden'); }
+
+      var html = '';
+      for(var i=0;i<cart.length;i++){
+        var it = cart[i];
+        var opt = [];
+        if(it.spice) opt.push(it.spice);
+        if(it.portion) opt.push(it.portion);
+        if(it.protein) opt.push(it.protein);
+        var addonTxt = (it.addons && it.addons.length) ? (' + ' + it.addons.join(' + ')) : '';
+        var optTxt = opt.length ? ('<div class="text-xs text-neutral-600">(' + escapeHtml(opt.join(', ')) + ')</div>') : '';
+        var noteTxt = it.note ? ('<div class="text-xs text-neutral-500 mt-1">• ' + escapeHtml(it.note) + '</div>') : '';
+        var unit = unitPrice(it);
+
+        html += ''
+          + '<div style="border:1px solid #e5e7eb;border-radius:14px;padding:.8rem;margin:.6rem 0;background:#fff;">'
+          +   '<div style="display:flex;justify-content:space-between;gap:.75rem;">'
+          +     '<div style="flex:1;min-width:0;">'
+          +       '<div style="font-weight:900;line-height:1.2;">' + escapeHtml(it.name) + escapeHtml(addonTxt) + '</div>'
+          +       optTxt
+          +       noteTxt
+          +       '<div class="text-sm mt-2" style="font-weight:900;color:#065f46;">' + thb(unit) + '/ที่ • รวม ' + thb(unit*it.qty) + '</div>'
+          +     '</div>'
+          +     '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:.5rem;">'
+          +       '<div style="display:flex;align-items:center;gap:.35rem;">'
+          +         '<button class="quickbtn" type="button" data-cartdec="'+i+'">−</button>'
+          +         '<input type="text" value="'+it.qty+'" data-cartqty="'+i+'" style="width:52px;text-align:center;padding:.4rem;border:1px solid #e5e7eb;border-radius:12px;">'
+          +         '<button class="quickbtn" type="button" data-cartinc="'+i+'">+</button>'
+          +       '</div>'
+          +       '<button class="quickbtn" type="button" style="border-color:#fecaca;background:#fff5f5" data-cartdel="'+i+'">ลบ</button>'
+          +     '</div>'
+          +   '</div>'
+          + '</div>';
+      }
+
+      var t = cartTotals();
+      html += '<div style="margin-top:.7rem;font-weight:900;color:#065f46;">รวมทั้งสิ้น: '+thb(t.total)+'</div>';
+
+      Swal.fire({
+        title: 'ตะกร้าสินค้า',
+        html: '<div style="text-align:left;max-height:60vh;overflow:auto;">'+html+'</div>',
+        width: 650,
+        showCancelButton: true,
+        confirmButtonText: 'ไปส่ง LINE',
+        cancelButtonText: 'ปิด',
+        didOpen: function(){
+          var pop = Swal.getPopup();
+
+          pop.addEventListener('click', function(e){
+            var el = e.target;
+
+            var dec = el.getAttribute('data-cartdec');
+            var inc = el.getAttribute('data-cartinc');
+            var del = el.getAttribute('data-cartdel');
+
+            if(dec!==null){
+              var i = parseInt(dec,10);
+              cartSetQty(i, cart[i].qty - 1);
+              Swal.close(); openCart();
+            }
+            if(inc!==null){
+              var j = parseInt(inc,10);
+              cartSetQty(j, cart[j].qty + 1);
+              Swal.close(); openCart();
+            }
+            if(del!==null){
+              var k = parseInt(del,10);
+              cartRemoveByIndex(k);
+              Swal.close(); openCart();
+            }
+          });
+
+          pop.addEventListener('input', function(e){
+            var idx = e.target.getAttribute('data-cartqty');
+            if(idx!==null){
+              var i2 = parseInt(idx,10);
+              cartSetQty(i2, e.target.value);
+            }
+          });
+        }
+      }).then(function(res){
+        if(res.isConfirmed){
+          confirmAndSend();
+        }
+      });
     }
 
-    /* ====== LINE helper → ส่งตรงหา OA @218sgmwj ====== */
+    /* ===== SEND TO LINE OA ===== */
     function openLineWith(text){
-      // แปลง \n เป็น CRLF เพื่อให้ LINE ขึ้นบรรทัดถูก
       var encoded = encodeURIComponent(text).replace(/%0A/g, '%0D%0A');
-      var appUrl  = 'line://oaMessage/@218sgmwj/?' + encoded;
-      var webUrl  = 'https://line.me/R/oaMessage/@218sgmwj/?' + encoded;
+      var appUrl  = 'line://oaMessage/@218sgmwj/?message=' + encoded;
+      var webUrl  = 'https://line.me/R/oaMessage/@218sgmwj/?message=' + encoded;
 
-      var triedFallback = false;
       var timer = setTimeout(function(){
-        if(!triedFallback){ triedFallback = true; window.open(webUrl, '_blank'); }
+        // fallback ไม่ใช้ window.open เพื่อลดโดนบล็อก
+        window.location.href = webUrl;
       }, 700);
 
       window.location.href = appUrl;
       window.addEventListener('pagehide', function(){ clearTimeout(timer); }, {once:true});
     }
 
-    function escapeHtml(str){
-      return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-        .replace(/\\"/g,'&quot;').replace(/'/g,'&#39;');
-    }
+    function buildOrderText(){
+      var lines = [], grand = 0;
+      for(var i=0;i<cart.length;i++){
+        var it = cart[i];
+        if(!it.spice || !it.portion) continue;
 
-    /* ====== Cart Snapshot / Persistence ======
-       รีหน้าแล้วล้างตะกร้า (ลบ storage และไม่ restore) */
-    var STORAGE_KEY = 'yai-nui-cart-es5';
-    function snapshot(){
-      var items = document.querySelectorAll('.lineitem');
-      var out = [];
-      for(var i=0;i<items.length;i++){
-        var li = items[i];
-        out.push({
-          item: li.dataset.item,
-          price: li.dataset.price,
-          qty: parseInt(li.dataset.qty||'0',10)||0,
-          addons: li.dataset.addons||'',
-          spice: li.dataset.spice||'',
-          portion: li.dataset.portion||'',
-          portionAdd: li.dataset.portionAdd||'0',
-          protein: li.dataset.protein||'',
-          note: li.dataset.note||''
-        });
+        var opt = [];
+        if(it.spice) opt.push(it.spice);
+        if(it.portion) opt.push(it.portion);
+        if(it.protein) opt.push(it.protein);
+
+        var addonTxt = (it.addons && it.addons.length) ? (' + ' + it.addons.join(' + ')) : '';
+        var optTxt = opt.length ? (' (' + opt.join(', ') + ')') : '';
+        var unit = unitPrice(it);
+        grand += unit * it.qty;
+
+        var noteTxt = it.note ? ('\n   • หมายเหตุ: ' + it.note) : '';
+        lines.push((i+1) + ') ' + it.name + addonTxt + optTxt + ' ×' + it.qty + ' — ' + thb(unit) + '/ที่' + noteTxt);
       }
-      return out;
-    }
-    function saveCart(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(snapshot())); }catch(e){} }
-    function loadCart(){
-      try{ localStorage.removeItem(STORAGE_KEY); }catch(e){}
-      recalcTotals();
-    }
-
-    /* ====== ยืนยัน/ส่งไป LINE OA ====== */
-    function buildAndCopyOrder(){
-      var items = document.querySelectorAll('.lineitem');
-      var lines = [], idx=1, grand=0, missing=[];
-
-      for(var i=0;i<items.length;i++){
-        var li = items[i];
-        var qty = parseInt(li.dataset.qty||'0',10)||0; if(!qty) continue;
-        var name = li.dataset.item;
-        var base = parseInt(li.dataset.price||'0',10);
-        var spice = li.dataset.spice||'';
-        var portion = li.dataset.portion||'';
-        if(!spice || !portion){ missing.push(name+' (ยังไม่เลือกตัวเลือก)'); continue; }
-        var addonsArr = (li.dataset.addons||'').split(',');
-        var addonList = []; for(var a=0;a<addonsArr.length;a++){ if(addonsArr[a]) addonList.push(addonsArr[a]); }
-        var portionAdd = parseInt(li.dataset.portionAdd||'0',10)||0;
-        var protein = li.dataset.protein||'';
-        var note = li.dataset.note||'';
-        var unit = base + addonList.length*ADDON_PRICE + portionAdd;
-        var total = unit * qty; grand += total;
-
-        var addonTxt = addonList.length ? ' + ' + addonList.join(' + ') : '';
-        var optParts = []; if(spice) optParts.push(spice); if(portion) optParts.push(portion); if(protein) optParts.push(protein);
-        var optTxt = optParts.length ? ' (' + optParts.join(', ') + ')' : '';
-        var noteTxt = note ? '\n   • หมายเหตุ: ' + note : '';
-        lines.push(idx + ') ' + name + addonTxt + optTxt + ' ×' + qty + ' — ' + thb(unit) + '/ที่' + noteTxt);
-        idx++;
-      }
-
-      if(missing.length){
-        Swal.fire({icon:'warning', title:'กรอกตัวเลือกไม่ครบ', html:'โปรดเลือกตัวเลือกก่อนยืนยัน:<br>• ' + missing.join('<br>• ')});
-        return;
-      }
-      if(!lines.length){
-        Swal.fire({icon:'info', title:'ยังไม่ได้เลือกเมนู', text:'กดปุ่ม “สั่ง” เพื่อเพิ่มรายการก่อนนะคะ'});
-        return;
-      }
-
       lines.push('รวมทั้งสิ้น: ' + thb(grand));
-      var text = lines.join('\n');
+      return lines.join('\n');
+    }
 
+    function confirmAndSend(){
+      if(!cart.length){
+        Swal.fire({icon:'info', title:'ตะกร้าว่าง', text:'กด “สั่ง” เพื่อเพิ่มรายการก่อนนะคะ'});
+        return;
+      }
+
+      var text = buildOrderText();
       Swal.fire({
         title: 'ตรวจสอบคำสั่งซื้อ',
-        html: '<pre style="text-align:left;white-space:pre-wrap;max-height:50vh;overflow:auto;padding:.75rem;border:1px solid #e5e7eb;border-radius:.75rem;background:#f9fafb;">'+escapeHtml(text)+'</pre>',
-        width: 600,
+        html: '<pre style="text-align:left;white-space:pre-wrap;max-height:55vh;overflow:auto;padding:.75rem;border:1px solid #e5e7eb;border-radius:.75rem;background:#f9fafb;">'+escapeHtml(text)+'</pre>',
+        width: 650,
         showCancelButton: true,
         showDenyButton: true,
         confirmButtonText: 'เปิด LINE และส่ง',
         denyButtonText: 'คัดลอกอย่างเดียว',
         cancelButtonText: 'แก้ไขต่อ',
-        reverseButtons: true,
-        focusConfirm: true
+        reverseButtons: true
       }).then(function(res){
         if(res.isConfirmed){
-          openLineWith(text); // ส่งไป OA @218sgmwj
+          openLineWith(text);
         }else if(res.isDenied){
           if(navigator.clipboard && navigator.clipboard.writeText){
             navigator.clipboard.writeText(text).then(function(){
-              Swal.fire({toast:true,position:'bottom',timer:2000,showConfirmButton:false,icon:'success',title:'คัดลอกแล้ว'});
+              Swal.fire({toast:true,position:'bottom',timer:1800,showConfirmButton:false,icon:'success',title:'คัดลอกแล้ว'});
             }, function(){
-              try{
-                var ta=document.createElement('textarea'); ta.value=text; ta.style.position='fixed'; ta.style.left='-9999px';
-                document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
-                Swal.fire({toast:true,position:'bottom',timer:2000,showConfirmButton:false,icon:'success',title:'คัดลอกแล้ว'});
-              }catch(e){
-                Swal.fire({icon:'error',title:'คัดลอกไม่สำเร็จ',text:'ลองอีกครั้งหรือตรวจสอบสิทธิ์การคัดลอก'});
-              }
+              fallbackCopy(text);
             });
           }else{
-            try{
-              var ta2=document.createElement('textarea'); ta2.value=text; ta2.style.position='fixed'; ta2.style.left='-9999px';
-              document.body.appendChild(ta2); ta2.select(); document.execCommand('copy'); document.body.removeChild(ta2);
-              Swal.fire({toast:true,position:'bottom',timer:2000,showConfirmButton:false,icon:'success',title:'คัดลอกแล้ว'});
-            }catch(e){
-              Swal.fire({icon:'error',title:'คัดลอกไม่สำเร็จ',text:'ลองอีกครั้งหรือตรวจสอบสิทธิ์การคัดลอก'});
-            }
+            fallbackCopy(text);
           }
         }
       });
     }
 
-    // init
-    render();
+    function fallbackCopy(text){
+      try{
+        var ta=document.createElement('textarea');
+        ta.value=text;
+        ta.style.position='fixed'; ta.style.left='-9999px';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        Swal.fire({toast:true,position:'bottom',timer:1800,showConfirmButton:false,icon:'success',title:'คัดลอกแล้ว'});
+      }catch(e){
+        Swal.fire({icon:'error',title:'คัดลอกไม่สำเร็จ',text:'ลองอีกครั้งหรือตรวจสอบสิทธิ์การคัดลอก'});
+      }
+    }
+
+    /* ===== init ===== */
+    loadCart();
+    updateCartPills();
+    renderMenu();
+
+    document.getElementById('search').addEventListener('input', function(){
+      renderMenu();
+    });
   </script>
 </body>
 </html>
-
