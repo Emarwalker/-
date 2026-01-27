@@ -642,29 +642,29 @@ var ENABLE_EGGS = true;
 
 var CATEGORIES = [
   { id:'kaprao', title:'กะเพรา', desc:'เผ็ดหอมใบกะเพรา', items:[
-    { name:'กระเพราหมูสับ', price:45, hot:true },
-    { name:'กระเพราไก่', price:40, hot:true },
-    { name:'กระเพราหมูกรอบ', price:55, hot:true },
-    { name:'กระเพราเครื่องในไก่', price:40 },
-    { name:'กระเพราหมูชิ้น', price:45 },
-    { name:'กระเพรากุ้ง', price:60 },
-    { name:'กระเพราหมูยอ', price:45 },
-    { name:'กระเพรากุนเชียง', price:45 },
-    { name:'กระเพราปลากระป๋อง', price:45 },
-    { name:'กระเพราหมูสับไข่เยี่ยวม้า', price:60 }
+    { name:'กระเพราหมูสับ', price:55, hot:true },
+    { name:'กระเพราไก่', price:50, hot:true },
+    { name:'กระเพราหมูกรอบ', price:65, hot:true },
+    { name:'กระเพราเครื่องในไก่', price:50 },
+    { name:'กระเพราหมูชิ้น', price:55 },
+    { name:'กระเพรากุ้ง', price:70 },
+    { name:'กระเพราหมูยอ', price:55 },
+    { name:'กระเพรากุนเชียง', price:55 },
+    { name:'กระเพราปลากระป๋อง', price:55 },
+    { name:'กระเพราหมูสับไข่เยี่ยวม้า', price:70 }
   ]},
   { id:'garlic', title:'กระเทียม', desc:'หอมกระเทียมเจียว', items:[
-    { name:'ไก่กระเทียม', price:40, hot:true },
-    { name:'หมูกระเทียม', price:45 },
-    { name:'หมูกรอบกระเทียม', price:55, hot:true },
-    { name:'กุ้งกระเทียม', price:60 }
+    { name:'ไก่กระเทียม', price:50, hot:true },
+    { name:'หมูกระเทียม', price:55 },
+    { name:'หมูกรอบกระเทียม', price:65, hot:true },
+    { name:'กุ้งกระเทียม', price:70 }
   ]},
   { id:'curry', title:'พริกแกง', desc:'เข้มข้นจัดจ้าน', items:[
-    { name:'ผัดพริกแกงหน่อไม้เหลือง/ขาวหมูชิ้น', price:50, hot:true },
-    { name:'ผัดพริกแกงไก่', price:45 },
-    { name:'ผัดพริกหยวกไก่/หมู', price:45, proteins:['ไก่','หมู'] },
-    { name:'ผัดพริกแกงถั่วใส่ไก่', price:45 },
-    { name:'ผัดพริกแกงหมูกรอบ', price:65 }
+    { name:'ผัดพริกแกงหน่อไม้เหลือง/ขาวหมูชิ้น', price:60, hot:true },
+    { name:'ผัดพริกแกงไก่', price:55 },
+    { name:'ผัดพริกหยวกไก่/หมู', price:55, proteins:['ไก่','หมู'] },
+    { name:'ผัดพริกแกงถั่วใส่ไก่', price:55 },
+    { name:'ผัดพริกแกงหมูกรอบ', price:75 }
   ]},
   { id:'special', title:'พิเศษ', desc:'เมนูพิเศษ', items:[
     { name:'ไข่เจียวหมูสับ (1 ฟอง)', price:35 },
@@ -738,8 +738,8 @@ function delItem(i){
 /* ================= LINE send ================= */
 function openLineWith(text){
   var encoded = encodeURIComponent(text).replace(/%0A/g,'%0D%0A');
-  var appUrl = 'line://oaMessage/' + OA_ID + '/?' + encoded;
-  var webUrl = 'https://line.me/R/oaMessage/' + OA_ID + '/?' + encoded;
+  var appUrl = 'line://oaMessage/' + OA_ID + '/?message=' + encoded;
+  var webUrl = 'https://line.me/R/oaMessage/' + OA_ID + '/?message=' + encoded;
 
   var timer = setTimeout(function(){
     // fallback แบบเบาและไม่โดน block
